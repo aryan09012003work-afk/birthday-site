@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // ════════════════════════════════════════════════════════════
 //  CONFIG — edit everything here before sharing
@@ -14,6 +15,9 @@ const APPROVED_EMAILS = [
   "priya@example.com",
   // ← add more approved emails here
 ];
+const SUPABASE_URL = "https://wrlzkuefjvawafbvzoxx.supabase.co/rest/v1/"; // your project URL
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndybHprdWVmanZhd2FmYnZ6b3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU1MzUsImV4cCI6MjA5NDk1MTUzNX0.ZZ5SQV0ezpCWwAh7AAK72hEpN5jaAY2on9HHyChTdmM"; // your anon key
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── HOW TO ADD PHOTOS ──────────────────────────────────────
 // Option A (recommended): Upload photo to https://imgbb.com
@@ -93,72 +97,75 @@ export default function BirthdayWebsite() {
   useEffect(() => { loadAll(); setTimeout(() => setLoaded(true), 200); }, []);
 
   // Change this URL to your live backend URL once deployed (e.g., https://your-backend.railway.app)
-  const BACKEND_URL = "http://localhost:5000"; 
+  
 
   async function loadAll() {
     try {
-      // Fetch text memories from the global database
-      const resMem = await fetch(`${BACKEND_URL}/api/memories`);
-      if (resMem.ok) {
-        const data = await resMem.json();
-        setMemories(data);
-      }
-      
-      // Fetch video wishes from the global database
-      const resVid = await fetch(`${BACKEND_URL}/api/videos`);
-      if (resVid.ok) {
-        const data = await resVid.json();
-        setVidWishes(data);
-      }
+      const { data: mems } = await supabase
+        .from("memories").select("*").order("timestamp", { ascending: true });
+      if (mems) setMemories(mems);
+
+      const { data: vids } = await supabase
+        .from("video_wishes").select("*").order("timestamp", { ascending: true });
+      if (vids) setVidWishes(vids.map(v => ({ ...v, videoURL: v.video_url })));
     } catch (e) {
-      console.error("Error connecting to global database server:", e);
+      console.error("Load error:", e);
     }
     setLoading(false);
   }
 
   async function saveMemory(mem) {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/memories`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mem)
-      });
-      
-      if (response.ok) {
-        const savedMemory = await response.json();
-        setMemories(prev => [...prev, savedMemory]);
-      }
+      const { data } = await supabase.from("memories").insert([{
+        email: mem.email,
+        name: mem.name,
+        tagline: mem.tagline,
+        how_we_met: mem.howWeMet,
+        favourite_moment: mem.favouriteMoment,
+        message: mem.message,
+        timestamp: mem.timestamp
+      }]).select().single();
+      if (data) setMemories(prev => [...prev, {
+        ...data,
+        howWeMet: data.how_we_met,
+        favouriteMoment: data.favourite_moment
+      }]);
     } catch (e) {
-      console.error("Failed to sync memory across systems:", e);
+      console.error("Save error:", e);
     }
   }
 
   async function handleVwSubmit() {
     if (!vwName || !vwFile) return;
     setVwSubmit("submitting");
-
     try {
-      // For videos, converting to Base64 to send safely to the database over an API
-      const videoData64 = await toBase64(vwFile);
-      
-      const response = await fetch(`${BACKEND_URL}/api/videos`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: vwName,
-          email: vwEmail.trim().toLowerCase(),
-          videoData: videoData64,
-          timestamp: Date.now()
-        })
-      });
+    // Upload video file to Supabase Storage
+      const fileName = `${Date.now()}-${vwFile.name.replace(/\s/g, "_")}`;
+      const { error: uploadError } = await supabase.storage
+        .from("videos").upload(fileName, vwFile);
 
-      if (response.ok) {
-        const savedVideo = await response.json();
-        setVidWishes(prev => [...prev, savedVideo]);
+      if (uploadError) throw uploadError;
+
+    // Get the public URL of the uploaded video
+      const { data: urlData } = supabase.storage
+        .from("videos").getPublicUrl(fileName);
+      const publicUrl = urlData.publicUrl;
+
+    // Save record to database
+      const { data } = await supabase.from("video_wishes").insert([{
+        email: vwEmail.trim().toLowerCase(),
+        name: vwName,
+        video_url: publicUrl,
+        timestamp: Date.now()
+      }]).select().single();
+
+      if (data) {
+        setVidWishes(prev => [...prev, { ...data, videoURL: publicUrl }]);
         setVwSubmit("done");
       }
     } catch (e) {
-      console.error("Failed to upload global video wish:", e);
+      console.error("Video upload error:", e);
+      alert("Upload failed. Try compressing the video first.");
       setVwSubmit("idle");
     }
   }
