@@ -27,17 +27,18 @@ const APPROVED_EMAILS = [
 //   "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
 const BIRTHDAY_PHOTOS = [
   // paste your photo URLs or base64 strings here, one per line:
-     "/Photo 2.JPEG",
-     "/Photo 5.JPEG",
-     "/Photo 6.JPEG",
-     "/Photo 8.JPEG",
-     "/Photo 9.JPEG",
-     "/Photo 10.JPEG",
-     "/Photo 11.JPEG",
-     "/Photo 12.JPEG",
-     "/Photo 3.JPEG",
-     "/Photo 4.JPEG",
-     "/Photo 7.JPEG"
+     "https://ibb.co/LdZW4L7s",
+     "https://ibb.co/m7bGbMs",
+     "https://ibb.co/bjQcQxbC",
+     "https://ibb.co/wNxRZNHY",
+     "https://ibb.co/ycmnkcCT",
+     "https://ibb.co/gB6Xdh4",
+     "https://ibb.co/gZQsr2tZ",
+     "https://ibb.co/8TxYv1T",
+     "https://ibb.co/ZzFgfy6C",
+     "https://ibb.co/fGPF4VnP",
+     "https://ibb.co/5xhnPb7j",
+     "https://ibb.co/JWkmJ0KK"
   
 ];
 
