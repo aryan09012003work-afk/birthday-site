@@ -28,8 +28,6 @@ const APPROVED_EMAILS = [
 const BIRTHDAY_PHOTOS = [
   // paste your photo URLs or base64 strings here, one per line:
      "https://i.ibb.co/r2wSnCrX/Photo-2.jpg",
-     "https://i.ibb.co/RWY9YVn/Photo-1.jpg",
-     "https://i.ibb.co/bjQcQxbC/Photo-4.jpg",
      "https://i.ibb.co/3yL75yXk/Photo-3.jpg",
      "https://i.ibb.co/5gXWjg3D/Photo-6.jpg",
      "https://i.ibb.co/76bTQLk/Photo-5.jpg",
