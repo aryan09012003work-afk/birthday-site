@@ -27,18 +27,18 @@ const APPROVED_EMAILS = [
 //   "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
 const BIRTHDAY_PHOTOS = [
   // paste your photo URLs or base64 strings here, one per line:
-     "https://ibb.co/LdZW4L7s",
-     "https://ibb.co/m7bGbMs",
-     "https://ibb.co/bjQcQxbC",
-     "https://ibb.co/wNxRZNHY",
-     "https://ibb.co/ycmnkcCT",
-     "https://ibb.co/gB6Xdh4",
-     "https://ibb.co/gZQsr2tZ",
-     "https://ibb.co/8TxYv1T",
-     "https://ibb.co/ZzFgfy6C",
-     "https://ibb.co/fGPF4VnP",
-     "https://ibb.co/5xhnPb7j",
-     "https://ibb.co/JWkmJ0KK"
+     "https://i.ibb.co/r2wSnCrX/Photo-2.jpg",
+     "https://i.ibb.co/RWY9YVn/Photo-1.jpg",
+     "https://i.ibb.co/bjQcQxbC/Photo-4.jpg",
+     "https://i.ibb.co/3yL75yXk/Photo-3.jpg",
+     "https://i.ibb.co/5gXWjg3D/Photo-6.jpg",
+     "https://i.ibb.co/76bTQLk/Photo-5.jpg",
+     "https://i.ibb.co/1GBH0gRG/Photo-8.jpg",
+     "https://i.ibb.co/Bd6nW0d/Photo-9.jpg",
+     "https://i.ibb.co/CKY9wx5F/Photo-7.jpg",
+     "https://i.ibb.co/k6WBQV9W/Photo-11.jpg",
+     "https://i.ibb.co/R4TBqR56/Photo-12.jpg",
+     "https://i.ibb.co/dsKjY1rr/Photo-10.jpg"
   
 ];
 
