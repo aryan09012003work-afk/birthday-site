@@ -12,7 +12,7 @@ const TURNING_AGE = 25;
 const BIRTHDAY_DATE = "26th May 2026";
 
 const APPROVED_EMAILS = [
-  "aditi@example.com",
+  "aryanrao92003@gmail.com",
   "riya@example.com",
   "sana@example.com",
   "priya@example.com",
