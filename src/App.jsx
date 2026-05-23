@@ -62,7 +62,7 @@ const photos = BIRTHDAY_PHOTOS.length > 0
   ? BIRTHDAY_PHOTOS
   : [PHOTO_PLACEHOLDER("📸"), PHOTO_PLACEHOLDER("🌸"), PHOTO_PLACEHOLDER("✨"), PHOTO_PLACEHOLDER("💙"), PHOTO_PLACEHOLDER("🎂")];
 
-const WORD_TAGS = ["Safe Space","Chosen Family","Secret Keeper","Forever Duo","Soul Sister","Always Her","Main Character","Sunshine Person","Core Memory"];
+const WORD_TAGS = ["Deep Roots","Late Night Laughs","Beautiful Mystery","Quiet Elegance","Effortless Charm","Slow Burn","Soft Power","Purely Present","Simply Captivating"];
 
 // ════════════════════════════════════════════════════════════
 export default function App() {
