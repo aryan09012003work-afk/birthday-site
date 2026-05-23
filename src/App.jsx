@@ -302,7 +302,7 @@ export default function App() {
     .hero-eyebrow {
       font-family: 'Caveat', cursive;
       font-weight: 600;
-      color: var(--white); /* This makes "the one, the only," text pure white */
+      color: var(--white); /* This makes "Hello," text pure white */
     }
     .hero-age, .finale-sign, .strip-label, .gallery-caption {
       font-family: 'Caveat', cursive;
@@ -608,12 +608,12 @@ export default function App() {
             a little corner of the internet, made just for you
             <span className="badge-star">✦</span>
           </div>
-          <p className="hero-eyebrow">the one, the only,</p>
+          <p className="hero-eyebrow">Hello,</p>
           <h1 className="hero-name">
             {BIRTHDAY_PERSON}
             <span className="hero-underline" />
           </h1>
-          <p className="hero-age">turning {TURNING_AGE} 🎉</p>
+          <p className="hero-age">Happy {TURNING_AGE} 🎉</p>
           <p className="hero-sub">The people who love you most have left little pieces of themselves here — memories, moments, and words that only you could have inspired.</p>
           <button className="hero-cta" onClick={() => scrollTo("memories")}>↓ &nbsp; Read their memories</button>
           <p className="hero-date">{BIRTHDAY_DATE}</p>
