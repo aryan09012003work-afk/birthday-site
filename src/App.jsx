@@ -13,9 +13,11 @@ const BIRTHDAY_DATE = "26th May 2026";
 
 const APPROVED_EMAILS = [
   "aryanrao92003@gmail.com",
-  "riya@example.com",
-  "sana@example.com",
-  "priya@example.com",
+  "vasvimittal113@gmail.com",
+  "pulkitkalra271202@gmail.com",
+  "Arunsatakshi70@gmail.com",
+  "rt7133175@gmail.com",
+  "trishasingh2926@gmail.com"
   // ← add more approved emails here
 ];
 
