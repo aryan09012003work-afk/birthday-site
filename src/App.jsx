@@ -399,11 +399,11 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
+    /* HIGH-END INTERACTIVE MASKED REVEAL LAYER COMPILER */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #141f36 0%, #060b14 100%);
+      background: radial-gradient(circle at center, #142038 0%, #050a12 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -411,6 +411,9 @@ export default function App() {
       justify-content: center;
       transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1);
       user-select: none;
+      
+      /* Explicit URL-encoded custom vector mask to guarantee rendering across engines */
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3E🔪%3C/text%3E%3C/svg%3E") 4 24, ns-resize !important;
     }
     .cake-overlay.hidden {
       opacity: 0;
@@ -424,16 +427,13 @@ export default function App() {
       align-items: center;
       justify-content: center;
     }
-    
-    /* Knife Cursor Injection Surface */
     .cake-wrapper {
       position: relative;
       width: 400px;
       height: 400px;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'%3E%3Ctext y='24'%3E🔪%3C/text%3E%3C/svg%3E") 4 22, ns-resize;
     }
     
-    /* 1px overlap configuration stops hairline pixel rendering gaps completely */
+    /* Segment Splits with exact Clip Paths to eliminate line separation views completely */
     .cake-plate-half {
       position: absolute;
       inset: 0;
@@ -466,7 +466,7 @@ export default function App() {
         0 20px 45px rgba(0,0,0,0.65);
     }
     
-    /* Elaborate piping laces and gold pearl wreath loops */
+    /* Concentric loops to create realistic piping borders */
     .cake-body-render::before {
       content: '';
       position: absolute;
@@ -694,7 +694,7 @@ export default function App() {
               />
             )}
 
-            {/* Cake Wrapper Using Clip-Paths with fine edge subpixel parameters overlap */}
+            {/* Masked Cake Container - Overlapped slightly to solve seam line gap views */}
             <div className="cake-wrapper">
               
               {/* Left Side rendering segment */}
