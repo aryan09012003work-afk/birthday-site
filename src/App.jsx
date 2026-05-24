@@ -11,10 +11,6 @@ const BIRTHDAY_PERSON = "Aayushi";
 const TURNING_AGE = 25;
 const BIRTHDAY_DATE = "26th May 2026";
 
-// 👑 LOCK TOGGLE SWITCH: Set to true when you share the link with Aayushi!
-// This hides all submission forms and stops her from voting on her own items.
-const IS_LOCKED_FOR_BIRTHDAY_PERSON = true; 
-
 const APPROVED_EMAILS = [
   "aryanrao92003@gmail.com",
   "riya@example.com",
@@ -57,7 +53,7 @@ export default function App() {
   const [memories, setMemories]     = useState([]);
   const [loading, setLoading]       = useState(true);
   const [memTab, setMemTab]         = useState("stories");
-  const [isCakeCut, setIsCakeCut]   = useState(false);
+  const [isCakeCut, setIsCakeCut] = useState(false);
 
   // memory form
   const [authEmail, setAuthEmail]   = useState("");
@@ -188,7 +184,7 @@ export default function App() {
 
   // ── Bucket List Upvoting Utility ──────────────────────────
   async function handleVote(id, currentVotes) {
-    if (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(id)) return; 
+    if (votedIds.includes(id)) return; 
 
     setVotedIds(prev => [...prev, id]);
     setBucketItems(prev => prev.map(item => item.id === id ? { ...item, votes: item.votes + 1 } : item).sort((a, b) => b.votes - a.votes));
@@ -321,7 +317,7 @@ export default function App() {
     @keyframes strip{from{transform:translateX(0)}to{transform:translateX(-50%)}}
     .strip-photo{width:100px;height:120px;flex-shrink:0;background:white;padding:6px 6px 22px;box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:1px}
     .strip-photo img{width:100%;height:100%;object-fit:cover;display:block}
-    .strip-photo .strip-label{font-family:'Caveat',cursive;font-size:11px;color:var(--dusty);text-align:center;margin-top:4px}
+    .strip-label{font-family:'Caveat',cursive;font-size:11px;color:var(--dusty);text-align:center;margin-top:4px}
 
     /* MARQUEE */
     .marquee-strip{background:linear-gradient(135deg,var(--mid),var(--blue));padding:13px 0;overflow:hidden}
@@ -368,7 +364,6 @@ export default function App() {
     .mem-card-bar{height:3px;border-radius:99px;background:linear-gradient(90deg,var(--mid),var(--accent));margin-bottom:1.2rem}
     .mem-head{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
     .mem-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--mid),var(--sky));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:1rem;color:white}
-    .mem-av-icon { width: 22px; height: 18px; margin-bottom: 4px; object-fit: contain; }
     .mem-name{font-size:15px;font-weight:500;color:var(--ink)}
     .mem-tag{font-size:11px;color:var(--dusty);font-style:italic;margin-top:2px}
     .mem-msg{font-family:'Instrument Serif',serif;font-style:italic;font-size:1rem;color:var(--blue);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -377,7 +372,7 @@ export default function App() {
     .mem-read{font-size:11px;color:var(--sky);border:1px solid var(--pale);border-radius:99px;padding:3px 10px;transition:all .2s}
     .mem-card:hover .mem-read{border-color:var(--sky);background:var(--frost)}
 
-    /* POST FORM BOX GENERAL STYLES */
+    /* VIDEO WISH FORM styles kept minimal if needed, safely purged standard features */
     .post-vid-box{background:var(--frost);border:1px solid var(--pale);border-radius:20px;padding:2rem;margin-top:2rem}
     .pvb-title{font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.4rem}
     .pvb-desc{font-size:.9rem;color:var(--dusty);margin-bottom:1.5rem;line-height:1.7;font-weight:300}
@@ -399,247 +394,55 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* FULLY CENTERED ACCURATE EMPTY PANEL BOX SYSTEM (LIGHT BASE PANEL) */
-    .empty-state {
-      grid-column: 1/-1;
-      width: 100%;
-      background: #f0f5fc !important;
-      border: 1px dashed #abc4e3 !important;
-      border-radius: 18px;
-      padding: 3.5rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 14px;
-      margin: 1.5rem auto 0 auto;
-    }
-    .empty-icon {
-      font-size: 2.2rem;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .empty-state p {
-      color: #1e3354 !important;
-      font-size: 0.98rem;
-      font-weight: 500;
-      margin: 0;
-      padding: 0;
-    }
+    /* EMPTY STATE */
+    .empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;background:var(--frost);border:2px dashed var(--pale);border-radius:24px}
+    .empty-icon{font-size:3rem;margin-bottom:1rem}
+    .empty-state p{color:var(--dusty);font-size:.95rem;line-height:1.7}
 
-    /* HIGH-CONTRAST READABLE SUCCESS DIALOG NOTIFICATIONS ON NAVY FLOORS */
-    .done-box {
-      text-align: center;
-      padding: 3.5rem 2.5rem;
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.18) !important;
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    .done-icon {
-      font-size: 3.2rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .done-title {
-      font-family: 'Caveat', cursive;
-      font-size: 2.4rem;
-      color: #6effbc !important; /* Luminous emerald neon green for extreme readability */
-      margin-bottom: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-    .done-txt {
-      font-size: 1.1rem;
-      color: #ffffff !important; /* Total fallback absolute pure white text */
-      line-height: 1.75;
-      font-weight: 400;
-      letter-spacing: 0.01em;
-    }
-
-    /* REFINED INTERACTIVE LIGHT-MIDNIGHT CAKE OVERLAY BACKDROP */
+    /* CAKE REVEAL SCREEN */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #182d52 0%, var(--navy) 100%);
+      background: var(--navy);
       z-index: 999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-      user-select: none;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30'%3E🔪%3C/text%3E%3C/svg%3E") 4 28, ns-resize !important;
+      transition: all 1s ease-in-out;
     }
-    .cake-overlay.hidden {
+    .cake-overlay.fade-out {
       opacity: 0;
       pointer-events: none;
+      transform: scale(1.05);
     }
-    .cake-viewport {
-      position: relative;
-      width: 440px;
-      height: 440px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .cake-wrapper {
-      position: relative;
-      width: 400px;
-      height: 400px;
-    }
-    
-    .cake-plate-half {
-      position: absolute;
-      inset: 0;
-      transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .cake-plate-half.left {
-      clip-path: polygon(0% 0%, 50.15% 0%, 50.15% 100%, 0% 100%);
-    }
-    .cake-plate-half.right {
-      clip-path: polygon(49.85% 0%, 100% 0%, 100% 100%, 49.85% 100%);
-    }
-    
-    .cake-is-split .cake-plate-half.left {
-      transform: translateX(-190px) rotate(-4.5deg);
-    }
-    .cake-is-split .cake-plate-half.right {
-      transform: translateX(190px) rotate(4.5deg);
-    }
-
-    .cake-body-render {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #fbe9ed 0%, #f9cad7 25%, #e995ad 65%, #c85371 95%, #a63953 100%);
-      border: 14px solid #fffef4;
-      box-shadow: 
-        inset 0 10px 25px rgba(255,255,255,0.5),
-        inset 0 -15px 35px rgba(115, 23, 41, 0.3), 
-        0 20px 45px rgba(0,0,0,0.5);
-    }
-    
-    .cake-body-render::before {
-      content: '';
-      position: absolute;
-      inset: 10px;
-      border-radius: 50%;
-      border: 6px dotted #ffffff;
-      opacity: 0.9;
-      filter: drop-shadow(0 2px 3px rgba(115,23,41,0.25));
-    }
-    .cake-body-render::after {
-      content: '';
-      position: absolute;
-      inset: 26px;
-      border-radius: 50%;
-      border: 3px double rgba(255, 255, 255, 0.4);
-      background: transparent;
-      box-shadow: inset 0 0 15px rgba(115, 23, 41, 0.12);
-    }
-    
-    .cake-lace-ring {
-      position: absolute;
-      inset: 18px;
-      border-radius: 50%;
-      border: 5px double #f2afc1;
-      opacity: 0.6;
-    }
-    
-    .cake-floral-wreath {
-      position: absolute;
-      inset: 38px;
-      border-radius: 50%;
-      border: 2px dashed rgba(244, 163, 185, 0.4);
-      pointer-events: none;
-    }
-    .cake-floral-wreath::before {
-      content: '🌸 🌿 🌸 🌿 🌸 🌿 🌸 🌿';
-      font-size: 13px;
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      letter-spacing: 1.1rem;
-      opacity: 0.5;
-      transform: rotate(15deg);
-    }
-
-    .cake-piping-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Caveat', cursive;
+    .cake-container {
       text-align: center;
-      line-height: 1.25;
-      user-select: none;
+      cursor: pointer;
+      position: relative;
     }
-    .cake-piping-main {
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: #631221;
-      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .cake-piping-name {
-      font-size: 3.4rem;
-      font-weight: 700;
-      color: #dfb561;
-      margin-top: 6px;
-      text-shadow: -1px -1px 0 #631221, 1px -1px 0 #631221, -1px 1px 0 #631221, 1px 1px 0 #631221, 0 3px 6px rgba(0,0,0,0.25);
-    }
-
-    .cake-cut-surface {
-      position: absolute;
-      inset: 0;
-      z-index: 50;
-      border-radius: 50%;
-    }
-    .slash-laser-line {
-      position: absolute;
-      width: 4px;
-      background: linear-gradient(to bottom, transparent, var(--sky), #ffffff, var(--sky), transparent);
-      box-shadow: 0 0 15px #ffffff, 0 0 30px var(--sky);
-      z-index: 60;
-      pointer-events: none;
-    }
-    
-    .cake-prompt-container {
-      margin-top: 5rem;
-      min-height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .cake-prompt-wrapper {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 10px 24px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(4px);
-    }
-    .cake-prompt-wrapper p {
-      color: #ffffff !important;
-      font-size: 1.9rem;
-      font-weight: 600;
-    }
-    .cake-lux-prompt {
+    .cake-prompt {
       font-family: 'Caveat', cursive;
-      text-align: center;
-      pointer-events: none;
-      transition: color 0.3s ease, transform 0.3s ease;
+      font-size: 2rem;
+      color: var(--accent);
+      margin-top: 2rem;
+      animation: pulse 2s infinite;
     }
-    .cake-lux-prompt.active {
-      color: var(--accent) !important;
-      transform: scale(1.02);
+    .knife-cursor {
+      font-size: 3rem;
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: slice 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slice {
+      0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
+      50% { transform: translate(-20px, 30px) rotate(-45deg); }
     }
 
     /* MODAL */
@@ -710,96 +513,15 @@ export default function App() {
       <style>{CSS}</style>
 
       {/* INTRO INTERACTIVE CAKE SCREEN */}
-      {!hideCakeScreen && (
-        <div className={`cake-overlay ${cakeSliced ? "hidden" : ""}`}>
-          <div className={`cake-viewport ${cakeSliced ? "cake-is-split" : ""}`}>
-            
-            {/* Click-and-Drag Surface Sensor Layer */}
-            {!cakeSliced && (
-              <div 
-                className="cake-cut-surface"
-                onMouseDown={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  setIsDragging(true);
-                  setDragPath({
-                    startY: e.clientY - rect.top,
-                    currentY: e.clientY - rect.top,
-                    posX: e.clientX - rect.left
-                  });
-                }}
-                onMouseMove={(e) => {
-                  if (!isDragging) return;
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const currentY = e.clientY - rect.top;
-                  
-                  setDragPath(prev => ({ ...prev, currentY }));
-                  
-                  const totalDelta = currentY - dragPath.startY;
-                  if (totalDelta > 260) {
-                    setIsDragging(false);
-                    setCakeSliced(true);
-                    setTimeout(() => setHideCakeScreen(true), 1300);
-                  }
-                }}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
-              />
-            )}
-
-            {/* Trailing Neon Slice Line Overlay */}
-            {isDragging && (
-              <div 
-                className="slash-laser-line"
-                style={{
-                  left: `${dragPath.posX}px`,
-                  top: `${Math.min(dragPath.startY, dragPath.currentY)}px`,
-                  height: `${Math.abs(dragPath.currentY - dragPath.startY)}px`
-                }}
-              />
-            )}
-
-            {/* Cake Wrapper Using Clip-Paths with fine edge subpixel parameters overlap */}
-            <div className="cake-wrapper">
-              
-              {/* Left Side rendering segment */}
-              <div className="cake-plate-half left">
-                <div className="cake-body-render" />
-                <div className="cake-lace-ring" />
-                <div className="cake-floral-wreath" />
-                <div className="cake-piping-text">
-                  <span className="cake-piping-main">Happy Birthday</span>
-                  <span className="cake-piping-name">{BIRTHDAY_PERSON}</span>
-                </div>
-              </div>
-
-              {/* Right Side rendering segment */}
-              <div className="cake-plate-half right">
-                <div className="cake-body-render" />
-                <div className="cake-lace-ring" />
-                <div className="cake-floral-wreath" />
-                <div className="cake-piping-text">
-                  <span className="cake-piping-main">Happy Birthday</span>
-                  <span className="cake-piping-name">{BIRTHDAY_PERSON}</span>
-                </div>
-              </div>
-
-            </div>
+      <div className={`cake-overlay ${isCakeCut ? "fade-out" : ""}`}>
+        <div className="cake-container" onClick={() => setIsCakeCut(true)}>
+          <span className="knife-cursor">🔪</span>
+          <div style={{ fontSize: "7rem", userSelect: "none", filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))" }}>
+            🎂
           </div>
-          
-          {/* Prompts container completely separated below the cake radius */}
-          <div className="cake-prompt-container">
-            <div className="cake-prompt-wrapper">
-              <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
-                {cakeSliced 
-                  ? "✨ Sliced beautifully! Opening website... ✨" 
-                  : isDragging 
-                  ? "Hold down & pull down to make the cut..." 
-                  : `Grab your knife cursor & slice down through the center, ${BIRTHDAY_PERSON}...`}
-              </p>
-            </div>
-          </div>
+          <p className="cake-prompt">Make a wish & click to cut the cake, {BIRTHDAY_PERSON}...</p>
         </div>
-      )}
+      </div>
 
       {/* NAV */}
       <nav className="nav">
@@ -830,7 +552,7 @@ export default function App() {
             {BIRTHDAY_PERSON}
             <span className="hero-underline" />
           </h1>
-          <p className="hero-age">Happy {TURNING_AGE}th 🎉</p>
+          <p className="hero-age">Happy {TURNING_AGE} 🎉</p>
           <p className="hero-sub">The people who love you most have left little pieces of themselves here — memories, moments, and words that only you could have inspired.</p>
           <button className="hero-cta" onClick={() => scrollTo("memories")}>↓ &nbsp; Read their memories</button>
           <p className="hero-date">{BIRTHDAY_DATE}</p>
@@ -896,12 +618,7 @@ export default function App() {
             {loading
               ? <div className="empty-state"><div className="empty-icon">⏳</div><p>Loading memories…</p></div>
               : memories.length === 0
-              ? <div className="empty-state">
-                  <div className="empty-icon">
-                    <img className="mem-av-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e3354'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E" alt="" />
-                  </div>
-                  <p>No memories yet — scroll down to be the first.</p>
-                </div>
+              ? <div className="empty-state"><div className="empty-icon">💌</div><p>No memories yet — scroll down to be the first.</p></div>
               : memories.map(mem => (
                 <div key={mem.id} className="mem-card" onClick={() => setOpenCard(mem)}>
                   <div className="mem-card-bar" />
@@ -957,7 +674,7 @@ export default function App() {
                     
                     <button 
                       onClick={() => handleVote(item.id, item.votes)}
-                      disabled={IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)}
+                      disabled={votedIds.includes(item.id)}
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -966,15 +683,15 @@ export default function App() {
                         padding: "8px 16px",
                         borderRadius: "12px",
                         border: "1px solid",
-                        borderColor: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "transparent" : "var(--pale)",
-                        background: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "var(--frost)" : "white",
-                        color: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "var(--mid)" : "var(--dusty)",
-                        cursor: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "default" : "pointer",
+                        borderColor: votedIds.includes(item.id) ? "transparent" : "var(--pale)",
+                        background: votedIds.includes(item.id) ? "var(--frost)" : "white",
+                        color: votedIds.includes(item.id) ? "var(--mid)" : "var(--dusty)",
+                        cursor: votedIds.includes(item.id) ? "default" : "pointer",
                         minWidth: "65px",
                         fontFamily: "inherit"
                       }}
                     >
-                      <span style={{ fontSize: "14px" }}>{(IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "🔥" : "👍"}</span>
+                      <span style={{ fontSize: "14px" }}>{votedIds.includes(item.id) ? "🔥" : "👍"}</span>
                       <span style={{ fontSize: "12px", fontWeight: "700" }}>{item.votes}</span>
                     </button>
                   </div>
@@ -983,145 +700,141 @@ export default function App() {
             </div>
 
             {/* Suggestion Form Box */}
-            {!IS_LOCKED_FOR_BIRTHDAY_PERSON && (
-              <div className="post-vid-box" style={{ marginTop: "3rem" }}>
-                <p className="pvb-title">Add a Challenge to {BIRTHDAY_PERSON}'s Bucket List 🎯</p>
-                <p className="pvb-desc">What adventures, foods, or wild milestones should she take on during her {TURNING_AGE}s?</p>
+            <div className="post-vid-box" style={{ marginTop: "3rem" }}>
+              <p className="pvb-title">Add a Challenge to {BIRTHDAY_PERSON}'s Bucket List 🎯</p>
+              <p className="pvb-desc">What adventures, foods, or wild milestones should she take on during her {TURNING_AGE}s?</p>
 
-                {blSubmitStatus === "done" ? (
-                  <div className="pvb-done">
-                    <div className="pvb-done-icon">🚀</div>
-                    <p className="pvb-done-title">Challenge added!</p>
-                    <p className="pvb-done-sub">Your suggestion is live. Tell others to upvote it!</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="pvb-row">
-                      <input className="pvb-input" type="email" placeholder="your email address"
-                        value={blEmail}
-                        onChange={e => { setBlEmail(e.target.value); setBlAuthStatus("idle"); }}
-                        disabled={blAuthStatus === "approved"} />
-                      {blAuthStatus !== "approved" && (
-                        <button className="pvb-vbtn" onClick={checkBlEmail}
-                          disabled={!blEmail || blAuthStatus === "checking"}>
-                          {blAuthStatus === "checking" ? "Checking…" : "Verify"}
-                        </button>
-                      )}
-                    </div>
-                    {blAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Submit your idea below.</p>}
-                    {blAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
-                    <p className="lock-row"><span>🔒</span> Only approved friends can contribute</p>
-
-                    {blAuthStatus === "approved" && (
-                      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <div>
-                          <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your Name *</label>
-                          <input className="pvb-input" style={{ width: "100%" }}
-                            placeholder="e.g. Aryan"
-                            value={blName} onChange={e => setBlName(e.target.value)} />
-                        </div>
-
-                        <div>
-                          <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>The Challenge *</label>
-                          <input className="pvb-input" style={{ width: "100%" }}
-                            placeholder="e.g. Backflip off a diving board, try ghost pepper ramen..."
-                            value={blSuggestion} onChange={e => setBlSuggestion(e.target.value)} />
-                        </div>
-
-                        <button className="pvb-submit" onClick={handleBlSubmit}
-                          disabled={!blName || !blSuggestion || blSubmitStatus === "submitting"}>
-                          {blSubmitStatus === "submitting" ? "Adding..." : "Add to Bucket List →"}
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </section>
-
-      {/* WRITE MEMORY */}
-      {!IS_LOCKED_FOR_BIRTHDAY_PERSON && (
-        <div id="write" className="write-wrap">
-          <div className="write-glow" />
-          <div className="write-inner">
-            <p className="sec-label" style={{ color: "var(--accent)" }}>Add Your Fragment</p>
-            <h2 className="sec-title" style={{ color: "var(--white)" }}>Leave a written memory</h2>
-            <p className="sec-desc" style={{ color: "rgba(200,222,255,.42)" }}></p>
-
-            <div className="write-box">
-              {submitStatus === "done" ? (
-                <div className="done-box">
-                  <div className="done-icon">🎉</div>
-                  <p className="done-title">Memory saved ✦</p>
-                  <p className="done-txt">Your words are now part of this page. She'll find them here when she visits.</p>
+              {blSubmitStatus === "done" ? (
+                <div className="pvb-done">
+                  <div className="pvb-done-icon">🚀</div>
+                  <p className="pvb-done-title">Challenge added!</p>
+                  <p className="pvb-done-sub">Your suggestion is live. Tell others to upvote it!</p>
                 </div>
               ) : (
                 <>
-                  <div>
-                    <label className="wlabel">Your email address</label>
-                    <div className="auth-row">
-                      <input className="winput" type="email" placeholder="you@example.com"
-                        value={authEmail}
-                        onChange={e => { setAuthEmail(e.target.value); setAuthStatus("idle"); }}
-                        disabled={authStatus === "approved"} />
-                      {authStatus !== "approved" && (
-                        <button className="vbtn" onClick={checkEmail}
-                          disabled={!authEmail || authStatus === "checking"}>
-                          {authStatus === "checking" ? "Checking…" : "Verify access"}
-                        </button>
-                      )}
-                    </div>
-                    {authStatus === "approved" && <p className="s-ok">✓ Access granted — write your memory below</p>}
-                    {authStatus === "denied" && <p className="s-no">✗ This email isn't on the approved list.</p>}
-                    {authStatus === "duplicate" && <p className="s-dup">You've already written a memory.</p>}
-                    <p className="lock-row" style={{ color: "rgba(200,222,255,.28)" }}><span>🔒</span> Only pre-approved emails can post</p>
+                  <div className="pvb-row">
+                    <input className="pvb-input" type="email" placeholder="your email address"
+                      value={blEmail}
+                      onChange={e => { setBlEmail(e.target.value); setBlAuthStatus("idle"); }}
+                      disabled={blAuthStatus === "approved"} />
+                    {blAuthStatus !== "approved" && (
+                      <button className="pvb-vbtn" onClick={checkBlEmail}
+                        disabled={!blEmail || blAuthStatus === "checking"}>
+                        {blAuthStatus === "checking" ? "Checking…" : "Verify"}
+                      </button>
+                    )}
                   </div>
+                  {blAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Submit your idea below.</p>}
+                  {blAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
+                  <p className="lock-row"><span>🔒</span> Only approved friends can contribute</p>
 
-                  {authStatus === "approved" && (
-                    <div className="wform">
-                      <div className="wdiv" />
-                      <div className="wgrid">
-                        <div>
-                          <label className="wlabel">Your name *</label>
-                          <input className="winput" placeholder="How you want to appear"
-                            value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                        </div>
-                        <div>
-                          <label className="wlabel">A short tagline (optional)</label>
-                          <input className="winput" placeholder="e.g. her college roommate…"
-                            value={formData.tagline} onChange={e => setFormData({ ...formData, tagline: e.target.value })} />
-                        </div>
-                        <div className="wfull">
-                          <label className="wlabel">How did you two meet? *</label>
-                          <textarea className="wtextarea" rows={3} placeholder="The story of how you first crossed paths…"
-                            value={formData.howWeMet} onChange={e => setFormData({ ...formData, howWeMet: e.target.value })} />
-                        </div>
-                        <div className="wfull">
-                          <label className="wlabel">A favourite moment (optional)</label>
-                          <textarea className="wtextarea" rows={3} placeholder="That one memory that still makes you smile…"
-                            value={formData.favouriteMoment} onChange={e => setFormData({ ...formData, favouriteMoment: e.target.value })} />
-                        </div>
-                        <div className="wfull">
-                          <label className="wlabel">Your birthday message *</label>
-                          <textarea className="wtextarea" rows={4} placeholder="What do you want her to know on this day?"
-                            value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
-                        </div>
+                  {blAuthStatus === "approved" && (
+                    <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your Name *</label>
+                        <input className="pvb-input" style={{ width: "100%" }}
+                          placeholder="e.g. Aryan"
+                          value={blName} onChange={e => setBlName(e.target.value)} />
                       </div>
-                      <button className="sbtn" onClick={handleMemSubmit}
-                        disabled={!formData.name || !formData.howWeMet || !formData.message || submitStatus === "submitting"}>
-                        {submitStatus === "submitting" ? "Saving…" : "Leave my memory →"}
+
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>The Challenge *</label>
+                        <input className="pvb-input" style={{ width: "100%" }}
+                          placeholder="e.g. Backflip off a diving board, try ghost pepper ramen..."
+                          value={blSuggestion} onChange={e => setBlSuggestion(e.target.value)} />
+                      </div>
+
+                      <button className="pvb-submit" onClick={handleBlSubmit}
+                        disabled={!blName || !blSuggestion || blSubmitStatus === "submitting"}>
+                        {blSubmitStatus === "submitting" ? "Adding..." : "Add to Bucket List →"}
                       </button>
                     </div>
                   )}
                 </>
               )}
             </div>
+          </>
+        )}
+      </section>
+
+      {/* WRITE MEMORY */}
+      <div id="write" className="write-wrap">
+        <div className="write-glow" />
+        <div className="write-inner">
+          <p className="sec-label" style={{ color: "var(--accent)" }}>Add Your Fragment</p>
+          <h2 className="sec-title" style={{ color: "var(--white)" }}>Leave a written memory</h2>
+          <p className="sec-desc" style={{ color: "rgba(200,222,255,.42)" }}></p>
+
+          <div className="write-box">
+            {submitStatus === "done" ? (
+              <div className="done-box">
+                <div className="done-icon">🎉</div>
+                <p className="done-title">Memory saved ✦</p>
+                <p className="done-txt">Your words are now part of this page. She'll find them here when she visits.</p>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label className="wlabel">Your email address</label>
+                  <div className="auth-row">
+                    <input className="winput" type="email" placeholder="you@example.com"
+                      value={authEmail}
+                      onChange={e => { setAuthEmail(e.target.value); setAuthStatus("idle"); }}
+                      disabled={authStatus === "approved"} />
+                    {authStatus !== "approved" && (
+                      <button className="vbtn" onClick={checkEmail}
+                        disabled={!authEmail || authStatus === "checking"}>
+                        {authStatus === "checking" ? "Checking…" : "Verify access"}
+                      </button>
+                    )}
+                  </div>
+                  {authStatus === "approved" && <p className="s-ok">✓ Access granted — write your memory below</p>}
+                  {authStatus === "denied" && <p className="s-no">✗ This email isn't on the approved list.</p>}
+                  {authStatus === "duplicate" && <p className="s-dup">You've already written a memory.</p>}
+                  <p className="lock-row" style={{ color: "rgba(200,222,255,.28)" }}><span>🔒</span> Only pre-approved emails can post</p>
+                </div>
+
+                {authStatus === "approved" && (
+                  <div className="wform">
+                    <div className="wdiv" />
+                    <div className="wgrid">
+                      <div>
+                        <label className="wlabel">Your name *</label>
+                        <input className="winput" placeholder="How you want to appear"
+                          value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="wlabel">A short tagline (optional)</label>
+                        <input className="winput" placeholder="e.g. her college roommate…"
+                          value={formData.tagline} onChange={e => setFormData({ ...formData, tagline: e.target.value })} />
+                      </div>
+                      <div className="wfull">
+                        <label className="wlabel">How did you two meet? *</label>
+                        <textarea className="wtextarea" rows={3} placeholder="The story of how you first crossed paths…"
+                          value={formData.howWeMet} onChange={e => setFormData({ ...formData, howWeMet: e.target.value })} />
+                      </div>
+                      <div className="wfull">
+                        <label className="wlabel">A favourite moment (optional)</label>
+                        <textarea className="wtextarea" rows={3} placeholder="That one memory that still makes you smile…"
+                          value={formData.favouriteMoment} onChange={e => setFormData({ ...formData, favouriteMoment: e.target.value })} />
+                      </div>
+                      <div className="wfull">
+                        <label className="wlabel">Your birthday message *</label>
+                        <textarea className="wtextarea" rows={4} placeholder="What do you want her to know on this day?"
+                          value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
+                      </div>
+                    </div>
+                    <button className="sbtn" onClick={handleMemSubmit}
+                      disabled={!formData.name || !formData.howWeMet || !formData.message || submitStatus === "submitting"}>
+                      {submitStatus === "submitting" ? "Saving…" : "Leave my memory →"}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
-      )}
+      </div>
 
       {/* FINALE */}
       <div className="finale">
@@ -1154,7 +867,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: "1.5rem" }}>
               <div className="mem-av" style={{ width: 52, height: 52, fontSize: "1.15rem" }}>{initials(openCard.name)}</div>
               <div>
-                <p className="mo-name museums">{openCard.name}</p>
+                <p className="mo-name">{openCard.name}</p>
                 {openCard.tagline && <p className="mo-tagline">{openCard.tagline}</p>}
               </div>
             </div>
