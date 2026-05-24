@@ -53,6 +53,7 @@ export default function App() {
   const [memories, setMemories]     = useState([]);
   const [loading, setLoading]       = useState(true);
   const [memTab, setMemTab]         = useState("stories");
+  const [isCakeCut, setIsCakeCut] = useState(false);
 
   // memory form
   const [authEmail, setAuthEmail]   = useState("");
@@ -398,6 +399,52 @@ export default function App() {
     .empty-icon{font-size:3rem;margin-bottom:1rem}
     .empty-state p{color:var(--dusty);font-size:.95rem;line-height:1.7}
 
+    /* CAKE REVEAL SCREEN */
+    .cake-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--navy);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 1s ease-in-out;
+    }
+    .cake-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.05);
+    }
+    .cake-container {
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .cake-prompt {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      color: var(--accent);
+      margin-top: 2rem;
+      animation: pulse 2s infinite;
+    }
+    .knife-cursor {
+      font-size: 3rem;
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: slice 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slice {
+      0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
+      50% { transform: translate(-20px, 30px) rotate(-45deg); }
+    }
+
     /* MODAL */
     .mo{position:fixed;inset:0;z-index:200;background:rgba(10,22,40,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:2rem}
     .mo-box{background:var(--white);border-radius:24px;max-width:580px;width:100%;max-height:85vh;overflow-y:auto;padding:2.5rem;position:relative;border:1px solid var(--pale);box-shadow:0 40px 80px rgba(10,22,40,.3)}
@@ -464,6 +511,17 @@ export default function App() {
   return (
     <div className="site">
       <style>{CSS}</style>
+
+      {/* INTRO INTERACTIVE CAKE SCREEN */}
+      <div className={`cake-overlay ${isCakeCut ? "fade-out" : ""}`}>
+        <div className="cake-container" onClick={() => setIsCakeCut(true)}>
+          <span className="knife-cursor">🔪</span>
+          <div style={{ fontSize: "7rem", userSelect: "none", filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))" }}>
+            🎂
+          </div>
+          <p className="cake-prompt">Make a wish & click to cut the cake, {BIRTHDAY_PERSON}...</p>
+        </div>
+      </div>
 
       {/* NAV */}
       <nav className="nav">
