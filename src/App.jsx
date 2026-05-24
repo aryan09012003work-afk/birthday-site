@@ -424,13 +424,16 @@ export default function App() {
       align-items: center;
       justify-content: center;
     }
+    
+    /* Knife Cursor Injection Surface */
     .cake-wrapper {
       position: relative;
       width: 400px;
       height: 400px;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'%3E%3Ctext y='24'%3E🔪%3C/text%3E%3C/svg%3E") 4 22, ns-resize;
     }
     
-    /* Perfect Subpixel overlap variables eliminate hair-line space render bugs */
+    /* 1px overlap configuration stops hairline pixel rendering gaps completely */
     .cake-plate-half {
       position: absolute;
       inset: 0;
@@ -481,6 +484,15 @@ export default function App() {
       border: 3px double rgba(255, 255, 255, 0.4);
       background: transparent;
       box-shadow: inset 0 0 15px rgba(92, 17, 32, 0.15);
+    }
+    
+    /* Filigree structural ring detail matching the referenced illustration loops */
+    .cake-lace-ring {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      border: 5px double #f4a3b9;
+      opacity: 0.5;
     }
     
     /* Micro botanical wreath alignment layer */
@@ -535,7 +547,6 @@ export default function App() {
       position: absolute;
       inset: 0;
       z-index: 50;
-      cursor: ns-resize;
       border-radius: 50%;
     }
     .slash-laser-line {
@@ -683,12 +694,13 @@ export default function App() {
               />
             )}
 
-            {/* Zero-gap double masked cake frame rendering single core illustration circle */}
+            {/* Cake Wrapper Using Clip-Paths with fine edge subpixel parameters overlap */}
             <div className="cake-wrapper">
               
               {/* Left Side rendering segment */}
               <div className="cake-plate-half left">
                 <div className="cake-body-render" />
+                <div className="cake-lace-ring" />
                 <div className="cake-floral-wreath" />
                 <div className="cake-piping-text">
                   <span className="cake-piping-main">Happy Birthday</span>
@@ -699,6 +711,7 @@ export default function App() {
               {/* Right Side rendering segment */}
               <div className="cake-plate-half right">
                 <div className="cake-body-render" />
+                <div className="cake-lace-ring" />
                 <div className="cake-floral-wreath" />
                 <div className="cake-piping-text">
                   <span className="cake-piping-main">Happy Birthday</span>
@@ -709,14 +722,14 @@ export default function App() {
             </div>
           </div>
           
-          {/* Prompts container isolated safely lower below the cake radius */}
+          {/* Prompts container completely separated below the cake radius */}
           <div className="cake-prompt-container">
             <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
               {cakeSliced 
                 ? "✨ Sliced beautifully! Opening website... ✨" 
                 : isDragging 
                 ? "Hold down & pull down to make the cut..." 
-                : `Left click & drag your cursor down to cut the cake, ${BIRTHDAY_PERSON}...`}
+                : `Grab your knife cursor & slice down through the center, ${BIRTHDAY_PERSON}...`}
             </p>
           </div>
         </div>
@@ -1066,7 +1079,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: "1.5rem" }}>
               <div className="mem-av" style={{ width: 52, height: 52, fontSize: "1.15rem" }}>{initials(openCard.name)}</div>
               <div>
-                <p className="mo-name">{openCard.name}</p>
+                <p className="mo-name museums">{openCard.name}</p>
                 {openCard.tagline && <p className="mo-tagline">{openCard.tagline}</p>}
               </div>
             </div>
