@@ -93,6 +93,15 @@ export default function App() {
 
   const [loaded, setLoaded]         = useState(false);
 
+  // Bucket list states
+  const [bucketItems, setBucketItems] = useState([]);
+  const [blEmail, setBlEmail] = useState("");
+  const [blAuthStatus, setBlAuthStatus] = useState("idle");
+  const [blName, setBlName] = useState("");
+  const [blSuggestion, setBlSuggestion] = useState("");
+  const [blSubmitStatus, setBlSubmitStatus] = useState("idle");
+  const [votedIds, setVotedIds] = useState([]); // Keeps track of what they voted for this session
+
   useEffect(() => { loadAll(); setTimeout(() => setLoaded(true), 200); }, []);
 
   
@@ -110,6 +119,12 @@ export default function App() {
       const { data: vids } = await supabase
         .from("video_wishes").select("*").order("timestamp", { ascending: true });
       if (vids) setVidWishes(vids.map(v => ({ ...v, videoURL: v.video_url })));
+
+      // Fetch Bucket List Items (Sorted by highest votes first)
+      const { data: bucket } = await supabase
+        .from("bucket_list").select("*").order("votes", { ascending: false });
+      if (bucket) setBucketItems(bucket);
+
     } catch (e) {
       console.error("Load error:", e);
     }
@@ -203,6 +218,16 @@ export default function App() {
     }, 700);
   }
 
+  // ── Bucket List auth ─────────────────────────────────────
+  function checkBlEmail() {
+    setBlAuthStatus("checking");
+    setTimeout(() => {
+      const c = blEmail.trim().toLowerCase();
+      if (APPROVED_EMAILS.map(e => e.toLowerCase()).includes(c)) { setBlAuthStatus("approved"); return; }
+      setBlAuthStatus("denied");
+    }, 700);
+  }
+
   // ── Handle video file selection for wish ────────────────
   function handleVwFileSelect(e) {
     const f = e.target.files[0];
@@ -246,6 +271,52 @@ export default function App() {
     // Keep session video URL in state for immediate display
     setMemories(prev => prev.map(m => m.id === mem.id ? { ...m, videoURL: memVideoURL } : m));
     setSubmitStatus("done");
+  }
+
+  // ── Bucket List Form Submission ──────────────────────────
+  async function handleBlSubmit() {
+    if (!blName || !blSuggestion) return;
+    setBlSubmitStatus("submitting");
+    try {
+      const newItem = {
+        email: blEmail.trim().toLowerCase(),
+        name: blName,
+        suggestion: blSuggestion,
+        votes: 1,
+        timestamp: Date.now()
+      };
+
+      const { data, error } = await supabase.from("bucket_list").insert([newItem]).select().single();
+      if (error) throw error;
+      
+      if (data) {
+        setBucketItems(prev => [data, ...prev].sort((a, b) => b.votes - a.votes));
+        setBlSuggestion("");
+        setBlSubmitStatus("done");
+        setTimeout(() => setBlSubmitStatus("idle"), 3000); 
+      }
+    } catch (e) {
+      console.error("Bucket list insert error:", e);
+      setBlSubmitStatus("idle");
+    }
+  }
+
+  // ── Bucket List Upvoting Utility ──────────────────────────
+  async function handleVote(id, currentVotes) {
+    if (votedIds.includes(id)) return; // Prevent duplicate voting in the same session
+
+    // Optimistic UI Update (Snappy change on client-side instantly)
+    setVotedIds(prev => [...prev, id]);
+    setBucketItems(prev => prev.map(item => item.id === id ? { ...item, votes: item.votes + 1 } : item).sort((a, b) => b.votes - a.votes));
+
+    try {
+      await supabase
+        .from("bucket_list")
+        .update({ votes: currentVotes + 1 })
+        .eq("id", id);
+    } catch (e) {
+      console.error("Error upvoting item:", e);
+    }
   }
 
 
@@ -671,6 +742,9 @@ export default function App() {
           <button className={`tab-btn ${memTab === "videos" ? "active" : ""}`} onClick={() => setMemTab("videos")}>
             🎥 Video Wishes <span className="tab-count">{allVidWishes.length}</span>
           </button>
+          <button className={`tab-btn ${memTab === "bucket" ? "active" : ""}`} onClick={() => setMemTab("bucket")}>
+            🎯 {BIRTHDAY_PERSON}'s Bucket List <span className="tab-count">{bucketItems.length}</span>
+          </button>
         </div>
 
         {/* STORIES TAB */}
@@ -797,6 +871,122 @@ export default function App() {
                       <button className="pvb-submit" onClick={handleVwSubmit}
                         disabled={!vwName || !vwFile || vwSubmit === "submitting"}>
                         {vwSubmit === "submitting" ? "Uploading…" : "Post my video wish →"}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* BUCKET LIST TAB */}
+        {memTab === "bucket" && (
+          <>
+            <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "16px" }}>
+              {loading ? (
+                <div className="empty-state"><div className="empty-icon">⏳</div><p>Loading items…</p></div>
+              ) : bucketItems.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">🎯</div>
+                  <p>The list is empty. Dare {BIRTHDAY_PERSON} to try something crazy below!</p>
+                </div>
+              ) : (
+                bucketItems.map((item) => (
+                  <div key={item.id} style={{
+                    background: "white", 
+                    border: "1px solid var(--pale)", 
+                    borderRadius: "16px", 
+                    padding: "1.2rem 1.6rem", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "space-between",
+                    transition: "all 0.2s"
+                  }}>
+                    <div>
+                      <p style={{ fontSize: "16px", fontWeight: "500", color: "var(--ink)", marginBottom: "4px" }}>
+                        {item.suggestion}
+                      </p>
+                      <p style={{ fontSize: "11px", color: "var(--dusty)" }}>
+                        Suggested by <span style={{ fontWeight: "500" }}>{item.name}</span>
+                      </p>
+                    </div>
+                    
+                    <button 
+                      onClick={() => handleVote(item.id, item.votes)}
+                      disabled={votedIds.includes(item.id)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "4px",
+                        padding: "8px 16px",
+                        borderRadius: "12px",
+                        border: "1px solid",
+                        borderColor: votedIds.includes(item.id) ? "transparent" : "var(--pale)",
+                        background: votedIds.includes(item.id) ? "var(--frost)" : "white",
+                        color: votedIds.includes(item.id) ? "var(--mid)" : "var(--dusty)",
+                        cursor: votedIds.includes(item.id) ? "default" : "pointer",
+                        minWidth: "65px",
+                        fontFamily: "inherit"
+                      }}
+                    >
+                      <span style={{ fontSize: "14px" }}>{votedIds.includes(item.id) ? "🔥" : "👍"}</span>
+                      <span style={{ fontSize: "12px", fontWeight: "700" }}>{item.votes}</span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Suggestion Form Box */}
+            <div className="post-vid-box" style={{ marginTop: "3rem" }}>
+              <p className="pvb-title">Add a Challenge to {BIRTHDAY_PERSON}'s Bucket List 🎯</p>
+              <p className="pvb-desc">What adventures, foods, or wild milestones should she take on during her {TURNING_AGE}s?</p>
+
+              {blSubmitStatus === "done" ? (
+                <div className="pvb-done">
+                  <div className="pvb-done-icon">🚀</div>
+                  <p className="pvb-done-title">Challenge added!</p>
+                  <p className="pvb-done-sub">Your suggestion is live. Tell others to upvote it!</p>
+                </div>
+              ) : (
+                <>
+                  <div className="pvb-row">
+                    <input className="pvb-input" type="email" placeholder="your email address"
+                      value={blEmail}
+                      onChange={e => { setBlEmail(e.target.value); setBlAuthStatus("idle"); }}
+                      disabled={blAuthStatus === "approved"} />
+                    {blAuthStatus !== "approved" && (
+                      <button className="pvb-vbtn" onClick={checkBlEmail}
+                        disabled={!blEmail || blAuthStatus === "checking"}>
+                        {blAuthStatus === "checking" ? "Checking…" : "Verify"}
+                      </button>
+                    )}
+                  </div>
+                  {blAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Submit your idea below.</p>}
+                  {blAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
+                  <p className="lock-row"><span>🔒</span> Only approved friends can contribute</p>
+
+                  {blAuthStatus === "approved" && (
+                    <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your Name *</label>
+                        <input className="pvb-input" style={{ width: "100%" }}
+                          placeholder="e.g. Aryan"
+                          value={blName} onChange={e => setBlName(e.target.value)} />
+                      </div>
+
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>The Challenge *</label>
+                        <input className="pvb-input" style={{ width: "100%" }}
+                          placeholder="e.g. Backflip off a diving board, try ghost pepper ramen..."
+                          value={blSuggestion} onChange={e => setBlSuggestion(e.target.value)} />
+                      </div>
+
+                      <button className="pvb-submit" onClick={handleBlSubmit}
+                        disabled={!blName || !blSuggestion || blSubmitStatus === "submitting"}>
+                        {blSubmitStatus === "submitting" ? "Adding..." : "Add to Bucket List →"}
                       </button>
                     </div>
                   )}
