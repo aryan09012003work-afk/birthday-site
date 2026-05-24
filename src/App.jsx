@@ -395,17 +395,19 @@ export default function App() {
     .pvb-submit{padding:13px 30px;border-radius:10px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em;transition:all .25s;box-shadow:0 6px 20px rgba(42,91,168,.35)}
     .pvb-submit:hover{transform:translateY(-2px)}
     .pvb-submit:disabled{opacity:.4;cursor:default;transform:none}
+    
+    /* NOTIFICATION/SUCCESS POPUPS HIGH CONTRAST RENDERING OVERRIDES */
     .pvb-done{text-align:center;padding:2rem}
     .pvb-done-icon{font-size:2.5rem;margin-bottom:.75rem}
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* FULLY CENTERED ACCURATE EMPTY PANEL BOX SYSTEM */
+    /* FULLY CENTERED ACCURATE EMPTY PANEL BOX SYSTEM (LIGHT BASE PANEL) */
     .empty-state {
       grid-column: 1/-1;
       width: 100%;
-      background: #e4ecf8;
-      border: 1px dashed #b2cae8;
+      background: #f0f5fc !important;
+      border: 1px dashed #abc4e3 !important;
       border-radius: 18px;
       padding: 3.5rem 2rem;
       display: flex;
@@ -424,18 +426,45 @@ export default function App() {
       justify-content: center;
     }
     .empty-state p {
-      color: #384f73;
-      font-size: 0.95rem;
-      font-weight: 400;
+      color: #1e3354 !important; /* Pure high contrast readable royal steel tone */
+      font-size: 0.98rem;
+      font-weight: 500;
       margin: 0;
       padding: 0;
+    }
+
+    /* SUBMISSION FORM SUCCESS BANNER */
+    .done-box {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .done-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .done-title {
+      font-family: 'Caveat', cursive;
+      font-size: 2.2rem;
+      color: #a4f5c6 !important; /* Vivid electric pastel mint */
+      margin-bottom: .75rem;
+      font-weight: 700;
+    }
+    .done-txt {
+      font-size: 1.05rem;
+      color: #ffffff !important; /* Absolute crystal white readable layout text */
+      line-height: 1.7;
+      font-weight: 400;
     }
 
     /* REFINED INTERACTIVE LIGHT-MIDNIGHT CAKE OVERLAY BACKDROP */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #132442 0%, var(--navy) 100%);
+      background: radial-gradient(circle at center, #182d52 0%, var(--navy) 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -482,7 +511,6 @@ export default function App() {
       transform: translateX(190px) rotate(4.5deg);
     }
 
-    /* Lighter, Fresh Pastel Velvet Frosting Profile */
     .cake-body-render {
       position: absolute;
       inset: 0;
@@ -866,7 +894,7 @@ export default function App() {
               : memories.length === 0
               ? <div className="empty-state">
                   <div className="empty-icon">
-                    <img className="mem-av-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4b72'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E" alt="" />
+                    <img className="mem-av-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e3354'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E" alt="" />
                   </div>
                   <p>No memories yet — scroll down to be the first.</p>
                 </div>
