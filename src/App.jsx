@@ -369,6 +369,7 @@ export default function App() {
     .mem-card-bar{height:3px;border-radius:99px;background:linear-gradient(90deg,var(--mid),var(--accent));margin-bottom:1.2rem}
     .mem-head{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
     .mem-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--mid),var(--sky));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:1rem;color:white}
+    .mem-av-icon { width: 22px; height: 18px; margin-bottom: 4px; object-fit: contain; }
     .mem-name{font-size:15px;font-weight:500;color:var(--ink)}
     .mem-tag{font-size:11px;color:var(--dusty);font-style:italic;margin-top:2px}
     .mem-msg{font-family:'Instrument Serif',serif;font-style:italic;font-size:1rem;color:var(--blue);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -399,21 +400,21 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* EMBEDDED DUSTY BLUE PANEL STYLES MATCHING THE ASSET PRESETS */
+    /* FULLY CENTERED ACCURATE EMPTY PANEL BOX SYSTEM */
     .empty-state {
       grid-column: 1/-1;
-      text-align: center;
-      padding: 3rem 2rem;
-      background: #e3edf9;
-      border: 1px dashed #b9cfea;
+      width: 100%;
+      background: #e4ecf8;
+      border: 1px dashed #b2cae8;
       border-radius: 18px;
+      padding: 3.5rem 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin: 1.5rem auto;
-      width: 100%;
+      text-align: center;
+      gap: 14px;
+      margin: 1.5rem auto 0 auto;
     }
     .empty-icon {
       font-size: 2.2rem;
@@ -423,18 +424,18 @@ export default function App() {
       justify-content: center;
     }
     .empty-state p {
-      color: #3b527a;
+      color: #384f73;
       font-size: 0.95rem;
       font-weight: 400;
-      letter-spacing: -0.01em;
       margin: 0;
+      padding: 0;
     }
 
-    /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
+    /* REFINED INTERACTIVE LIGHT-MIDNIGHT CAKE OVERLAY BACKDROP */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #141f36 0%, #060b14 100%);
+      background: radial-gradient(circle at center, #132442 0%, var(--navy) 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -481,17 +482,17 @@ export default function App() {
       transform: translateX(190px) rotate(4.5deg);
     }
 
-    /* HIGH-END LUXURY EMBOSSED CAKE BODY ART ILLUSTRATION */
+    /* Lighter, Fresh Pastel Velvet Frosting Profile */
     .cake-body-render {
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #fcdfe6 0%, #f7b9cb 25%, #e07f99 65%, #ba405f 95%, #962a45 100%);
-      border: 14px solid #fffef0;
+      background: radial-gradient(circle at 35% 35%, #fbe9ed 0%, #f9cad7 25%, #e995ad 65%, #c85371 95%, #a63953 100%);
+      border: 14px solid #fffef4;
       box-shadow: 
-        inset 0 10px 25px rgba(255,255,255,0.4),
-        inset 0 -15px 35px rgba(92, 17, 32, 0.4), 
-        0 20px 45px rgba(0,0,0,0.65);
+        inset 0 10px 25px rgba(255,255,255,0.5),
+        inset 0 -15px 35px rgba(115, 23, 41, 0.3), 
+        0 20px 45px rgba(0,0,0,0.5);
     }
     
     .cake-body-render::before {
@@ -500,8 +501,8 @@ export default function App() {
       inset: 10px;
       border-radius: 50%;
       border: 6px dotted #ffffff;
-      opacity: 0.85;
-      filter: drop-shadow(0 2px 3px rgba(92,17,32,0.3));
+      opacity: 0.9;
+      filter: drop-shadow(0 2px 3px rgba(115,23,41,0.25));
     }
     .cake-body-render::after {
       content: '';
@@ -510,15 +511,15 @@ export default function App() {
       border-radius: 50%;
       border: 3px double rgba(255, 255, 255, 0.4);
       background: transparent;
-      box-shadow: inset 0 0 15px rgba(92, 17, 32, 0.15);
+      box-shadow: inset 0 0 15px rgba(115, 23, 41, 0.12);
     }
     
     .cake-lace-ring {
       position: absolute;
       inset: 18px;
       border-radius: 50%;
-      border: 5px double #f4a3b9;
-      opacity: 0.5;
+      border: 5px double #f2afc1;
+      opacity: 0.6;
     }
     
     .cake-floral-wreath {
@@ -537,7 +538,7 @@ export default function App() {
       align-items: center;
       justify-content: center;
       letter-spacing: 1.1rem;
-      opacity: 0.45;
+      opacity: 0.5;
       transform: rotate(15deg);
     }
 
@@ -556,15 +557,15 @@ export default function App() {
     .cake-piping-main {
       font-size: 2.8rem;
       font-weight: 700;
-      color: #520917;
-      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0,0,0,0.15);
+      color: #631221;
+      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0,0,0,0.1);
     }
     .cake-piping-name {
       font-size: 3.4rem;
       font-weight: 700;
-      color: #cda252;
+      color: #dfb561;
       margin-top: 6px;
-      text-shadow: -1px -1px 0 #520917, 1px -1px 0 #520917, -1px 1px 0 #520917, 1px 1px 0 #520917, 0 3px 6px rgba(0,0,0,0.3);
+      text-shadow: -1px -1px 0 #631221, 1px -1px 0 #631221, -1px 1px 0 #631221, 1px 1px 0 #631221, 0 3px 6px rgba(0,0,0,0.25);
     }
 
     .cake-cut-surface {
@@ -590,10 +591,10 @@ export default function App() {
       justify-content: center;
     }
     .cake-prompt-wrapper {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       padding: 10px 24px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(4px);
     }
     .cake-lux-prompt {
@@ -797,7 +798,7 @@ export default function App() {
             {BIRTHDAY_PERSON}
             <span className="hero-underline" />
           </h1>
-          <p className="hero-age">Happy {TURNING_AGE} 🎉</p>
+          <p className="hero-age">Happy {TURNING_AGE}th 🎉</p>
           <p className="hero-sub">The people who love you most have left little pieces of themselves here — memories, moments, and words that only you could have inspired.</p>
           <button className="hero-cta" onClick={() => scrollTo("memories")}>↓ &nbsp; Read their memories</button>
           <p className="hero-date">{BIRTHDAY_DATE}</p>
@@ -863,7 +864,12 @@ export default function App() {
             {loading
               ? <div className="empty-state"><div className="empty-icon">⏳</div><p>Loading memories…</p></div>
               : memories.length === 0
-              ? <div className="empty-state"><div className="empty-icon">✉️</div><p>No memories yet — scroll down to be the first.</p></div>
+              ? <div className="empty-state">
+                  <div className="empty-icon">
+                    <img className="mem-av-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4b72'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E" alt="" />
+                  </div>
+                  <p>No memories yet — scroll down to be the first.</p>
+                </div>
               : memories.map(mem => (
                 <div key={mem.id} className="mem-card" onClick={() => setOpenCard(mem)}>
                   <div className="mem-card-bar" />
