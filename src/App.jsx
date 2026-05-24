@@ -249,7 +249,7 @@ export default function App() {
     @keyframes fl1{0%,100%{transform:rotate(-15deg) translateY(0)}50%{transform:rotate(-15deg) translateY(-12px)}}
     @keyframes fl2{0%,100%{transform:rotate(-10deg) translateY(0)}50%{transform:rotate(-10deg) translateY(-10px)}}
     .hero-left{position:relative;z-index:1}
-    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius99px;border:1px solid rgba(74,144,217,.3);background:rgba(74,144,217,.08);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;border:1px solid rgba(74,144,217,.3);background:rgba(74,144,217,.08);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem}
     .badge-star{color:var(--gold);animation:spin 4s linear infinite;display:inline-block}
     @keyframes spin{to{transform:rotate(360deg)}}
     .hero-eyebrow {
@@ -399,11 +399,6 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* EMPTY STATE */
-    .empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;background:var(--frost);border:2px dashed var(--pale);border-radius:24px}
-    .empty-icon{font-size:3rem;margin-bottom:1rem}
-    .empty-state p{color:var(--dusty);font-size:.95rem;line-height:1.7}
-
     /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
     .cake-overlay {
       position: fixed;
@@ -435,7 +430,7 @@ export default function App() {
       height: 400px;
     }
     
-    /* 1px overlap configuration stops hairline pixel rendering gaps completely */
+    /* Perfect Subpixel overlap variables eliminate hair-line space render bugs */
     .cake-plate-half {
       position: absolute;
       inset: 0;
@@ -455,7 +450,7 @@ export default function App() {
       transform: translateX(190px) rotate(4.5deg);
     }
 
-    /* HIGH-END LUXURY EMBOSSED CAKE Body ILLUSTRATION */
+    /* HIGH-END LUXURY EMBOSSED CAKE BODY ART ILLUSTRATION */
     .cake-body-render {
       position: absolute;
       inset: 0;
@@ -468,7 +463,7 @@ export default function App() {
         0 20px 45px rgba(0,0,0,0.65);
     }
     
-    /* Elaborate piping borders inspired by standard pastry frames */
+    /* Elaborate piping laces and gold pearl wreath loops */
     .cake-body-render::before {
       content: '';
       position: absolute;
@@ -488,7 +483,7 @@ export default function App() {
       box-shadow: inset 0 0 15px rgba(92, 17, 32, 0.15);
     }
     
-    /* Elegant Floral Border Rings mimicking the template asset rings */
+    /* Micro botanical wreath alignment layer */
     .cake-floral-wreath {
       position: absolute;
       inset: 38px;
@@ -509,7 +504,7 @@ export default function App() {
       transform: rotate(15deg);
     }
 
-    /* Master Centered Typography Interface */
+    /* Master Calligraphy Text Piping Alignment */
     .cake-piping-text {
       position: absolute;
       inset: 0;
@@ -688,7 +683,7 @@ export default function App() {
               />
             )}
 
-            {/* Masked Cake Container - Overlapped slightly to solve seam line gap views */}
+            {/* Zero-gap double masked cake frame rendering single core illustration circle */}
             <div className="cake-wrapper">
               
               {/* Left Side rendering segment */}
@@ -714,7 +709,7 @@ export default function App() {
             </div>
           </div>
           
-          {/* Prompts container isolated safely lower below the full viewport radius boundary */}
+          {/* Prompts container isolated safely lower below the cake radius */}
           <div className="cake-prompt-container">
             <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
               {cakeSliced 
