@@ -11,6 +11,10 @@ const BIRTHDAY_PERSON = "Aayushi";
 const TURNING_AGE = 25;
 const BIRTHDAY_DATE = "26th May 2026";
 
+// 👑 LOCK SWITCH: Set to true when you share it with Aayushi!
+// This hides submission forms, verify screens, and disables bucket list voting.
+const IS_LOCKED_FOR_BIRTHDAY_PERSON = true; 
+
 const APPROVED_EMAILS = [
   "aryanrao92003@gmail.com",
   "riya@example.com",
@@ -189,7 +193,7 @@ export default function App() {
 
   // ── Bucket List Upvoting Utility ──────────────────────────
   async function handleVote(id, currentVotes) {
-    if (votedIds.includes(id)) return; 
+    if (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(id)) return; 
 
     setVotedIds(prev => [...prev, id]);
     setBucketItems(prev => prev.map(item => item.id === id ? { ...item, votes: item.votes + 1 } : item).sort((a, b) => b.votes - a.votes));
@@ -395,14 +399,35 @@ export default function App() {
     .pvb-submit{padding:13px 30px;border-radius:10px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em;transition:all .25s;box-shadow:0 6px 20px rgba(42,91,168,.35)}
     .pvb-submit:hover{transform:translateY(-2px)}
     .pvb-submit:disabled{opacity:.4;cursor:default;transform:none}
-    
-    /* NOTIFICATION/SUCCESS POPUPS HIGH CONTRAST RENDERING OVERRIDES */
     .pvb-done{text-align:center;padding:2rem}
     .pvb-done-icon{font-size:2.5rem;margin-bottom:.75rem}
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* FULLY CENTERED ACCURATE EMPTY PANEL BOX SYSTEM (LIGHT BASE PANEL) */
+    /* COMFORTABLE HIGH CONTRAST ALERT LAYOUTS FOR DARK/NAVY SECTIONS */
+    .done-box {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.07) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .done-icon { font-size: 3rem; margin-bottom: 1.2rem; }
+    .done-title {
+      font-family: 'Caveat', cursive;
+      font-size: 2.3rem;
+      color: #79fbc4 !important; /* Extremely high contrast high-luminous modern mint */
+      margin-bottom: .75rem;
+      font-weight: 700;
+    }
+    .done-txt {
+      font-size: 1.08rem;
+      color: #ffffff !important; /* Solid readable clean text overlay overrides canvas alpha tags */
+      line-height: 1.75;
+    }
+
+    /* FULLY CENTERED EMPTY PRESENTATION COMPONENT BOX (LIGHT PANEL BASE) */
     .empty-state {
       grid-column: 1/-1;
       width: 100%;
@@ -426,38 +451,11 @@ export default function App() {
       justify-content: center;
     }
     .empty-state p {
-      color: #1e3354 !important; /* Pure high contrast readable royal steel tone */
+      color: #1e3354 !important;
       font-size: 0.98rem;
       font-weight: 500;
       margin: 0;
       padding: 0;
-    }
-
-    /* SUBMISSION FORM SUCCESS BANNER */
-    .done-box {
-      text-align: center;
-      padding: 3rem 2rem;
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      border-radius: 16px;
-      backdrop-filter: blur(8px);
-    }
-    .done-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    .done-title {
-      font-family: 'Caveat', cursive;
-      font-size: 2.2rem;
-      color: #a4f5c6 !important; /* Vivid electric pastel mint */
-      margin-bottom: .75rem;
-      font-weight: 700;
-    }
-    .done-txt {
-      font-size: 1.05rem;
-      color: #ffffff !important; /* Absolute crystal white readable layout text */
-      line-height: 1.7;
-      font-weight: 400;
     }
 
     /* REFINED INTERACTIVE LIGHT-MIDNIGHT CAKE OVERLAY BACKDROP */
@@ -625,80 +623,21 @@ export default function App() {
       border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(4px);
     }
+    .cake-prompt-wrapper p {
+      color: #ffffff !important; /* Clean premium high-contrast white layout prompt strings */
+      font-size: 1.9rem;
+      font-weight: 600;
+    }
     .cake-lux-prompt {
       font-family: 'Caveat', cursive;
-      font-size: 2rem;
-      color: var(--sky);
       text-align: center;
       pointer-events: none;
       transition: color 0.3s ease, transform 0.3s ease;
     }
     .cake-lux-prompt.active {
-      color: var(--accent);
+      color: var(--accent) !important;
       transform: scale(1.02);
     }
-
-    /* MODAL */
-    .mo{position:fixed;inset:0;z-index:200;background:rgba(10,22,40,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:2rem}
-    .mo-box{background:var(--white);border-radius:24px;max-width:580px;width:100%;max-height:85vh;overflow-y:auto;padding:2.5rem;position:relative;border:1px solid var(--pale);box-shadow:0 40px 80px rgba(10,22,40,.3)}
-    .mo-close-dark{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--pale);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--dusty);transition:all .2s}
-    .mo-close-dark:hover{border-color:var(--ink);color:var(--ink)}
-    .mo-name{font-family:'Instrument Serif',serif;font-size:1.8rem;margin-bottom:.3rem}
-    .mo-tagline{font-size:13px;color:var(--dusty);font-style:italic;margin-bottom:2rem}
-    .mo-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);margin-bottom:.5rem;display:block}
-    .mo-text{font-size:14px;color:#2a3f5f;line-height:1.75;font-weight:300}
-    .mo-msg{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.2rem;color:var(--blue);line-height:1.6}
-    .mo-div{height:1px;background:var(--pale);margin:1.5rem 0}
-
-    /* WRITE SECTION */
-    .write-wrap{background:var(--navy);position:relative;overflow:hidden}
-    .write-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(42,91,168,.28) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-    .write-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:6rem 2rem}
-    .write-box{background:rgba(255,255,255,.04);border:1px solid rgba(74,144,217,.18);border-radius:24px;padding:2.5rem;margin-top:2.5rem;backdrop-filter:blur(10px)}
-    .wlabel{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,222,255,.45);margin-bottom:7px}
-    .winput{width:100%;padding:12px 16px;border:1px solid rgba(74,144,217,.18);border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.05);color:var(--white);outline:none;transition:border-color .2s}
-    .winput:focus{border-color:var(--sky)}
-    .winput::placeholder{color:rgba(200,222,255,.22)}
-    .wtextarea{width:100%;padding:12px 16px;border:1px solid rgba(74,144,217,.18);border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.05);color:var(--white);outline:none;resize:vertical;line-height:1.65;transition:border-color .2s}
-    .wtextarea:focus{border-color:var(--sky)}
-    .wtextarea::placeholder{color:rgba(200,222,255,.22)}
-    .auth-row{display:flex;gap:12px;flex-wrap:wrap}
-    .auth-row .winput{flex:1;min-width:200px}
-    .vbtn{padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em;transition:all .2s;white-space:nowrap}
-    .vbtn:hover{opacity:.85}
-    .vbtn:disabled{opacity:.4;cursor:default}
-    .s-ok{font-size:13px;color:#7ECBA1;margin-top:6px}
-    .s-no{font-size:13px;color:#FF8FAB;margin-top:6px}
-    .s-dup{font-size:13px;color:var(--gold);margin-top:6px}
-    .wform{margin-top:2rem;display:flex;flex-direction:column;gap:16px}
-    .wgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .wfull{grid-column:1/-1}
-    .wdiv{height:1px;background:rgba(74,144,217,.12)}
-    .sbtn{padding:15px 36px;border-radius:12px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.06em;transition:all .25s;box-shadow:0 8px 24px rgba(42,91,168,.4);align-self:flex-start}
-    .sbtn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(42,91,168,.5)}
-    .sbtn:disabled{opacity:.4;cursor:default;transform:none}
-
-    /* FINALE */
-    .finale{background:var(--navy);text-align:center;padding:8rem 2rem;position:relative;overflow:hidden}
-    .finale-bg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Instrument Serif',serif;font-size:clamp(12rem,35vw,22rem);font-weight:400;color:rgba(255,255,255,.025);line-height:1;pointer-events:none;white-space:nowrap}
-    .finale-in{position:relative;z-index:1;max-width:600px;margin:0 auto}
-    .finale-lbl{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:rgba(200,222,255,.28);margin-bottom:2rem}
-    .finale-h{font-family:'Instrument Serif',serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:400;color:var(--white);line-height:1.1;margin-bottom:1.5rem}
-    .finale-h em{font-style:italic;color:var(--accent)}
-    .finale-p{font-size:1rem;color:rgba(200,222,255,.42);line-height:1.9;font-weight:300}
-    .finale-sign{margin-top:3rem;font-family:'Caveat',cursive;font-size:1.8rem;color:var(--gold)}
-    .finale-hearts{margin-top:2rem;font-size:1.4rem;letter-spacing:.3em;animation:hb 2s ease-in-out infinite}
-    @keyframes hb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.93)}}
-    .finale-photos{display:flex;justify-content:center;gap:20px;margin-bottom:3rem;flex-wrap:wrap}
-    .fp-frame{background:white;padding:7px 7px 26px;box-shadow:0 8px 30px rgba(0,0,0,.4);border-radius:2px;width:110px;flex-shrink:0}
-    .fp-frame:nth-child(odd){transform:rotate(-4deg)}
-    .fp-frame:nth-child(even){transform:rotate(3deg)}
-    .fp-frame:nth-child(3){transform:rotate(-1.5deg)}
-    .fp-frame img{width:100%;height:130px;object-fit:cover;display:block}
-
-    .fade{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
-    .fade.in{opacity:1;transform:translateY(0)}
-    @media(max-width:600px){.wgrid{grid-template-columns:1fr}}
   `;
 
   return (
@@ -953,7 +892,7 @@ export default function App() {
                     
                     <button 
                       onClick={() => handleVote(item.id, item.votes)}
-                      disabled={votedIds.includes(item.id)}
+                      disabled={IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)}
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -962,15 +901,15 @@ export default function App() {
                         padding: "8px 16px",
                         borderRadius: "12px",
                         border: "1px solid",
-                        borderColor: votedIds.includes(item.id) ? "transparent" : "var(--pale)",
-                        background: votedIds.includes(item.id) ? "var(--frost)" : "white",
-                        color: votedIds.includes(item.id) ? "var(--mid)" : "var(--dusty)",
-                        cursor: votedIds.includes(item.id) ? "default" : "pointer",
+                        borderColor: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "transparent" : "var(--pale)",
+                        background: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "var(--frost)" : "white",
+                        color: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "var(--mid)" : "var(--dusty)",
+                        cursor: (IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "default" : "pointer",
                         minWidth: "65px",
                         fontFamily: "inherit"
                       }}
                     >
-                      <span style={{ fontSize: "14px" }}>{votedIds.includes(item.id) ? "🔥" : "👍"}</span>
+                      <span style={{ fontSize: "14px" }}>{(IS_LOCKED_FOR_BIRTHDAY_PERSON || votedIds.includes(item.id)) ? "🔥" : "👍"}</span>
                       <span style={{ fontSize: "12px", fontWeight: "700" }}>{item.votes}</span>
                     </button>
                   </div>
@@ -979,141 +918,145 @@ export default function App() {
             </div>
 
             {/* Suggestion Form Box */}
-            <div className="post-vid-box" style={{ marginTop: "3rem" }}>
-              <p className="pvb-title">Add a Challenge to {BIRTHDAY_PERSON}'s Bucket List 🎯</p>
-              <p className="pvb-desc">What adventures, foods, or wild milestones should she take on during her {TURNING_AGE}s?</p>
+            {!IS_LOCKED_FOR_BIRTHDAY_PERSON && (
+              <div className="post-vid-box" style={{ marginTop: "3rem" }}>
+                <p className="pvb-title">Add a Challenge to {BIRTHDAY_PERSON}'s Bucket List 🎯</p>
+                <p className="pvb-desc">What adventures, foods, or wild milestones should she take on during her {TURNING_AGE}s?</p>
 
-              {blSubmitStatus === "done" ? (
-                <div className="pvb-done">
-                  <div className="pvb-done-icon">🚀</div>
-                  <p className="pvb-done-title">Challenge added!</p>
-                  <p className="pvb-done-sub">Your suggestion is live. Tell others to upvote it!</p>
+                {blSubmitStatus === "done" ? (
+                  <div className="pvb-done">
+                    <div className="pvb-done-icon">🚀</div>
+                    <p className="pvb-done-title">Challenge added!</p>
+                    <p className="pvb-done-sub">Your suggestion is live. Tell others to upvote it!</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="pvb-row">
+                      <input className="pvb-input" type="email" placeholder="your email address"
+                        value={blEmail}
+                        onChange={e => { setBlEmail(e.target.value); setBlAuthStatus("idle"); }}
+                        disabled={blAuthStatus === "approved"} />
+                      {blAuthStatus !== "approved" && (
+                        <button className="pvb-vbtn" onClick={checkBlEmail}
+                          disabled={!blEmail || blAuthStatus === "checking"}>
+                          {blAuthStatus === "checking" ? "Checking…" : "Verify"}
+                        </button>
+                      )}
+                    </div>
+                    {blAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Submit your idea below.</p>}
+                    {blAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
+                    <p className="lock-row"><span>🔒</span> Only approved friends can contribute</p>
+
+                    {blAuthStatus === "approved" && (
+                      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your Name *</label>
+                          <input className="pvb-input" style={{ width: "100%" }}
+                            placeholder="e.g. Aryan"
+                            value={blName} onChange={e => setBlName(e.target.value)} />
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>The Challenge *</label>
+                          <input className="pvb-input" style={{ width: "100%" }}
+                            placeholder="e.g. Backflip off a diving board, try ghost pepper ramen..."
+                            value={blSuggestion} onChange={e => setBlSuggestion(e.target.value)} />
+                        </div>
+
+                        <button className="pvb-submit" onClick={handleBlSubmit}
+                          disabled={!blName || !blSuggestion || blSubmitStatus === "submitting"}>
+                          {blSubmitStatus === "submitting" ? "Adding..." : "Add to Bucket List →"}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </section>
+
+      {/* WRITE MEMORY */}
+      {!IS_LOCKED_FOR_BIRTHDAY_PERSON && (
+        <div id="write" className="write-wrap">
+          <div className="write-glow" />
+          <div className="write-inner">
+            <p className="sec-label" style={{ color: "var(--accent)" }}>Add Your Fragment</p>
+            <h2 className="sec-title" style={{ color: "var(--white)" }}>Leave a written memory</h2>
+            <p className="sec-desc" style={{ color: "rgba(200,222,255,.42)" }}></p>
+
+            <div className="write-box">
+              {submitStatus === "done" ? (
+                <div className="done-box">
+                  <div className="done-icon">🎉</div>
+                  <p className="done-title">Memory saved ✦</p>
+                  <p className="done-txt">Your words are now part of this page. She'll find them here when she visits.</p>
                 </div>
               ) : (
                 <>
-                  <div className="pvb-row">
-                    <input className="pvb-input" type="email" placeholder="your email address"
-                      value={blEmail}
-                      onChange={e => { setBlEmail(e.target.value); setBlAuthStatus("idle"); }}
-                      disabled={blAuthStatus === "approved"} />
-                    {blAuthStatus !== "approved" && (
-                      <button className="pvb-vbtn" onClick={checkBlEmail}
-                        disabled={!blEmail || blAuthStatus === "checking"}>
-                        {blAuthStatus === "checking" ? "Checking…" : "Verify"}
-                      </button>
-                    )}
+                  <div>
+                    <label className="wlabel">Your email address</label>
+                    <div className="auth-row">
+                      <input className="winput" type="email" placeholder="you@example.com"
+                        value={authEmail}
+                        onChange={e => { setAuthEmail(e.target.value); setAuthStatus("idle"); }}
+                        disabled={authStatus === "approved"} />
+                      {authStatus !== "approved" && (
+                        <button className="vbtn" onClick={checkEmail}
+                          disabled={!authEmail || authStatus === "checking"}>
+                          {authStatus === "checking" ? "Checking…" : "Verify access"}
+                        </button>
+                      )}
+                    </div>
+                    {authStatus === "approved" && <p className="s-ok">✓ Access granted — write your memory below</p>}
+                    {authStatus === "denied" && <p className="s-no">✗ This email isn't on the approved list.</p>}
+                    {authStatus === "duplicate" && <p className="s-dup">You've already written a memory.</p>}
+                    <p className="lock-row" style={{ color: "rgba(200,222,255,.28)" }}><span>🔒</span> Only pre-approved emails can post</p>
                   </div>
-                  {blAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Submit your idea below.</p>}
-                  {blAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
-                  <p className="lock-row"><span>🔒</span> Only approved friends can contribute</p>
 
-                  {blAuthStatus === "approved" && (
-                    <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <div>
-                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your Name *</label>
-                        <input className="pvb-input" style={{ width: "100%" }}
-                          placeholder="e.g. Aryan"
-                          value={blName} onChange={e => setBlName(e.target.value)} />
+                  {authStatus === "approved" && (
+                    <div className="wform">
+                      <div className="wdiv" />
+                      <div className="wgrid">
+                        <div>
+                          <label className="wlabel">Your name *</label>
+                          <input className="winput" placeholder="How you want to appear"
+                            value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                        </div>
+                        <div>
+                          <label className="wlabel">A short tagline (optional)</label>
+                          <input className="winput" placeholder="e.g. her college roommate…"
+                            value={formData.tagline} onChange={e => setFormData({ ...formData, tagline: e.target.value })} />
+                        </div>
+                        <div className="wfull">
+                          <label className="wlabel">How did you two meet? *</label>
+                          <textarea className="wtextarea" rows={3} placeholder="The story of how you first crossed paths…"
+                            value={formData.howWeMet} onChange={e => setFormData({ ...formData, howWeMet: e.target.value })} />
+                        </div>
+                        <div className="wfull">
+                          <label className="wlabel">A favourite moment (optional)</label>
+                          <textarea className="wtextarea" rows={3} placeholder="That one memory that still makes you smile…"
+                            value={formData.favouriteMoment} onChange={e => setFormData({ ...formData, favouriteMoment: e.target.value })} />
+                        </div>
+                        <div className="wfull">
+                          <label className="wlabel">Your birthday message *</label>
+                          <textarea className="wtextarea" rows={4} placeholder="What do you want her to know on this day?"
+                            value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
+                        </div>
                       </div>
-
-                      <div>
-                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>The Challenge *</label>
-                        <input className="pvb-input" style={{ width: "100%" }}
-                          placeholder="e.g. Backflip off a diving board, try ghost pepper ramen..."
-                          value={blSuggestion} onChange={e => setBlSuggestion(e.target.value)} />
-                      </div>
-
-                      <button className="pvb-submit" onClick={handleBlSubmit}
-                        disabled={!blName || !blSuggestion || blSubmitStatus === "submitting"}>
-                        {blSubmitStatus === "submitting" ? "Adding..." : "Add to Bucket List →"}
+                      <button className="sbtn" onClick={handleMemSubmit}
+                        disabled={!formData.name || !formData.howWeMet || !formData.message || submitStatus === "submitting"}>
+                        {submitStatus === "submitting" ? "Saving…" : "Leave my memory →"}
                       </button>
                     </div>
                   )}
                 </>
               )}
             </div>
-          </>
-        )}
-      </section>
-
-      {/* WRITE MEMORY */}
-      <div id="write" className="write-wrap">
-        <div className="write-glow" />
-        <div className="write-inner">
-          <p className="sec-label" style={{ color: "var(--accent)" }}>Add Your Fragment</p>
-          <h2 className="sec-title" style={{ color: "var(--white)" }}>Leave a written memory</h2>
-          <p className="sec-desc" style={{ color: "rgba(200,222,255,.42)" }}></p>
-
-          <div className="write-box">
-            {submitStatus === "done" ? (
-              <div className="done-box">
-                <div className="done-icon">🎉</div>
-                <p className="done-title">Memory saved ✦</p>
-                <p className="done-txt">Your words are now part of this page. She'll find them here when she visits.</p>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <label className="wlabel">Your email address</label>
-                  <div className="auth-row">
-                    <input className="winput" type="email" placeholder="you@example.com"
-                      value={authEmail}
-                      onChange={e => { setAuthEmail(e.target.value); setAuthStatus("idle"); }}
-                      disabled={authStatus === "approved"} />
-                    {authStatus !== "approved" && (
-                      <button className="vbtn" onClick={checkEmail}
-                        disabled={!authEmail || authStatus === "checking"}>
-                        {authStatus === "checking" ? "Checking…" : "Verify access"}
-                      </button>
-                    )}
-                  </div>
-                  {authStatus === "approved" && <p className="s-ok">✓ Access granted — write your memory below</p>}
-                  {authStatus === "denied" && <p className="s-no">✗ This email isn't on the approved list.</p>}
-                  {authStatus === "duplicate" && <p className="s-dup">You've already written a memory.</p>}
-                  <p className="lock-row" style={{ color: "rgba(200,222,255,.28)" }}><span>🔒</span> Only pre-approved emails can post</p>
-                </div>
-
-                {authStatus === "approved" && (
-                  <div className="wform">
-                    <div className="wdiv" />
-                    <div className="wgrid">
-                      <div>
-                        <label className="wlabel">Your name *</label>
-                        <input className="winput" placeholder="How you want to appear"
-                          value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                      </div>
-                      <div>
-                        <label className="wlabel">A short tagline (optional)</label>
-                        <input className="winput" placeholder="e.g. her college roommate…"
-                          value={formData.tagline} onChange={e => setFormData({ ...formData, tagline: e.target.value })} />
-                      </div>
-                      <div className="wfull">
-                        <label className="wlabel">How did you two meet? *</label>
-                        <textarea className="wtextarea" rows={3} placeholder="The story of how you first crossed paths…"
-                          value={formData.howWeMet} onChange={e => setFormData({ ...formData, howWeMet: e.target.value })} />
-                      </div>
-                      <div className="wfull">
-                        <label className="wlabel">A favourite moment (optional)</label>
-                        <textarea className="wtextarea" rows={3} placeholder="That one memory that still makes you smile…"
-                          value={formData.favouriteMoment} onChange={e => setFormData({ ...formData, favouriteMoment: e.target.value })} />
-                      </div>
-                      <div className="wfull">
-                        <label className="wlabel">Your birthday message *</label>
-                        <textarea className="wtextarea" rows={4} placeholder="What do you want her to know on this day?"
-                          value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
-                      </div>
-                    </div>
-                    <button className="sbtn" onClick={handleMemSubmit}
-                      disabled={!formData.name || !formData.howWeMet || !formData.message || submitStatus === "submitting"}>
-                      {submitStatus === "submitting" ? "Saving…" : "Leave my memory →"}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* FINALE */}
       <div className="finale">
