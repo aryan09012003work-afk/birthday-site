@@ -399,6 +399,37 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
+    /* EMBEDDED DUSTY BLUE PANEL STYLES MATCHING THE ASSET PRESETS */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: #e3edf9;
+      border: 1px dashed #b9cfea;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 1.5rem auto;
+      width: 100%;
+    }
+    .empty-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .empty-state p {
+      color: #3b527a;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
     /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
     .cake-overlay {
       position: fixed;
@@ -411,8 +442,6 @@ export default function App() {
       justify-content: center;
       transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1);
       user-select: none;
-      
-      /* Fully Web-Encoded SVG standard fallback definition to force crosshair logic to look like a knife */
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30'%3E🔪%3C/text%3E%3C/svg%3E") 4 28, ns-resize !important;
     }
     .cake-overlay.hidden {
@@ -433,7 +462,6 @@ export default function App() {
       height: 400px;
     }
     
-    /* 1px overlap configuration stops hairline pixel rendering gaps completely */
     .cake-plate-half {
       position: absolute;
       inset: 0;
@@ -466,7 +494,6 @@ export default function App() {
         0 20px 45px rgba(0,0,0,0.65);
     }
     
-    /* Elaborate piping laces and gold pearl wreath loops */
     .cake-body-render::before {
       content: '';
       position: absolute;
@@ -486,7 +513,6 @@ export default function App() {
       box-shadow: inset 0 0 15px rgba(92, 17, 32, 0.15);
     }
     
-    /* Filigree structural ring detail matching the referenced illustration loops */
     .cake-lace-ring {
       position: absolute;
       inset: 18px;
@@ -495,7 +521,6 @@ export default function App() {
       opacity: 0.5;
     }
     
-    /* Micro botanical wreath alignment layer */
     .cake-floral-wreath {
       position: absolute;
       inset: 38px;
@@ -516,7 +541,6 @@ export default function App() {
       transform: rotate(15deg);
     }
 
-    /* Master Calligraphy Text Piping Alignment */
     .cake-piping-text {
       position: absolute;
       inset: 0;
@@ -729,7 +753,7 @@ export default function App() {
             </div>
           </div>
           
-          {/* Prompts container isolated safely lower below the cake radius */}
+          {/* Prompts container completely separated below the cake radius */}
           <div className="cake-prompt-container">
             <div className="cake-prompt-wrapper">
               <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
@@ -839,7 +863,7 @@ export default function App() {
             {loading
               ? <div className="empty-state"><div className="empty-icon">⏳</div><p>Loading memories…</p></div>
               : memories.length === 0
-              ? <div className="empty-state"><div className="empty-icon">💌</div><p>No memories yet — scroll down to be the first.</p></div>
+              ? <div className="empty-state"><div className="empty-icon">✉️</div><p>No memories yet — scroll down to be the first.</p></div>
               : memories.map(mem => (
                 <div key={mem.id} className="mem-card" onClick={() => setOpenCard(mem)}>
                   <div className="mem-card-bar" />
