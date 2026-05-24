@@ -399,11 +399,11 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* REFINED INTERACTIVE MASKED CAKE OVERLAY */
+    /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #0f1c30 0%, #050a12 100%);
+      background: radial-gradient(circle at center, #0e1c33 0%, #050a12 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -430,17 +430,19 @@ export default function App() {
       height: 360px;
     }
     
-    /* Segment Splits with exact Clip Paths to eliminate overlap rendering */
+    /* 1px overlapping panels layout overrides white grid seam gap lines */
     .cake-plate-half {
       position: absolute;
       inset: 0;
       transition: transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .cake-plate-half.left {
-      clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);
+      clip-path: polygon(0% 0%, 50.3% 0%, 50.3% 100%, 0% 100%);
+      margin-right: -1px;
     }
     .cake-plate-half.right {
-      clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+      clip-path: polygon(49.7% 0%, 100% 0%, 100% 100%, 49.7% 100%);
+      margin-left: -1px;
     }
     
     .cake-is-split .cake-plate-half.left {
@@ -477,7 +479,7 @@ export default function App() {
       border: 2px solid rgba(255, 255, 255, 0.25);
     }
 
-    /* Unified Centered Scripting */
+    /* Unified Centered Scripting layout overlay inside circles */
     .cake-piping-text {
       position: absolute;
       inset: 0;
@@ -645,7 +647,7 @@ export default function App() {
               />
             )}
 
-            {/* Cake Wrapper Using Clip-Paths to split a single core model background layer */}
+            {/* Cake Wrapper Using Clip-Paths with fine edge subpixel parameters overlap */}
             <div className="cake-wrapper">
               
               {/* Left Side rendering segment */}
