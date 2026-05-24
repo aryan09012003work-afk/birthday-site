@@ -54,9 +54,11 @@ export default function App() {
   const [loading, setLoading]       = useState(true);
   const [memTab, setMemTab]         = useState("stories");
   
-  // Cake overlay interaction state variables
+  // Real Drag & Swipe Interactive Cake States
+  const [isDragging, setIsDragging]   = useState(false);
   const [cakeSliced, setCakeSliced]   = useState(false);
   const [hideCakeScreen, setHideCakeScreen] = useState(false);
+  const [dragPath, setDragPath]       = useState({ startY: 0, currentY: 0, posX: 160 });
 
   // memory form
   const [authEmail, setAuthEmail]   = useState("");
@@ -402,87 +404,122 @@ export default function App() {
     .empty-icon{font-size:3rem;margin-bottom:1rem}
     .empty-state p{color:var(--dusty);font-size:.95rem;line-height:1.7}
 
-    /* TOP-DOWN CAKE REVEAL SCREEN */
+    /* PREMIUM INTERACTIVE GESTURE CAKE OVERLAY */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: #060d1a;
+      background: radial-gradient(circle at center, #0e1c33 0%, #050b14 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.8s ease-in-out;
+      transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+      user-select: none;
     }
     .cake-overlay.hidden {
       opacity: 0;
       pointer-events: none;
     }
-    .cake-box {
+    .cake-viewport {
       position: relative;
-      width: 320px;
-      height: 320px;
+      width: 360px;
+      height: 360px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .cake-half {
+    .cake-wrapper {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cake-plate-half {
       position: absolute;
       width: 160px;
       height: 320px;
       overflow: hidden;
-      transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-      pointer-events: none;
+      transition: transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .cake-half.left { left: 0; }
-    .cake-half.right { right: 0; }
+    .cake-plate-half.left { left: 0; }
+    .cake-plate-half.right { right: 0; }
     
-    .cake-sliced .cake-half.left {
-      transform: translateX(-140px) rotate(-8deg);
+    .cake-is-split .cake-plate-half.left {
+      transform: translateX(-160px) rotate(-6deg);
     }
-    .cake-sliced .cake-half.right {
-      transform: translateX(140px) rotate(8deg);
+    .cake-is-split .cake-plate-half.right {
+      transform: translateX(160px) rotate(6deg);
     }
-    .cake-frosting {
+    .cake-body-render {
       position: absolute;
       width: 320px;
       height: 320px;
-      background: radial-gradient(circle, #e6b2c2 40%, #df9bb0 70%, #cc7a93 100%);
       border-radius: 50%;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.15);
-      border: 8px solid #fdf0f4;
+      background: radial-gradient(circle at center, #f5c2cf 0%, #eba3b7 55%, #db7f98 85%, #c45f79 100%);
+      border: 8px solid #fffdf0;
+      box-shadow: inset 0 0 25px rgba(115, 36, 57, 0.2), 0 12px 35px rgba(0,0,0,0.5);
+    }
+    .cake-plate-half.left .cake-body-render { left: 0; }
+    .cake-plate-half.right .cake-body-render { right: -160px; }
+
+    .cake-body-render::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      border: 4px dashed rgba(255, 255, 255, 0.55);
+      opacity: 0.6;
+    }
+    .cake-piping-text {
+      position: absolute;
+      width: 320px;
+      height: 320px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-    .cake-half.left .cake-frosting { left: 0; }
-    .cake-half.right .cake-frosting { right: -160px; }
-    
-    .cake-text {
       font-family: 'Caveat', cursive;
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 700;
-      color: #7d2e43;
+      color: #631523;
       text-align: center;
-      width: 240px;
-      white-space: normal;
-      line-height: 1.3;
-      user-select: none;
-      text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
+      line-height: 1.25;
+      text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4);
     }
-    .cutting-sensor {
+    .cake-plate-half.left .cake-piping-text { left: 0; }
+    .cake-plate-half.right .cake-piping-text { right: -160px; }
+
+    .cake-cut-surface {
       position: absolute;
       inset: 0;
-      z-index: 10;
-      cursor: crosshair;
+      z-index: 50;
+      cursor: ns-resize;
+      border-radius: 50%;
     }
-    .cake-prompt {
+    .slash-laser-line {
+      position: absolute;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--sky), #ffffff, var(--sky), transparent);
+      box-shadow: 0 0 12px #ffffff, 0 0 25px var(--sky);
+      z-index: 60;
+      pointer-events: none;
+    }
+    .cake-lux-prompt {
       font-family: 'Caveat', cursive;
-      font-size: 2rem;
-      color: var(--accent);
-      margin-top: 3rem;
+      font-size: 1.8rem;
+      color: var(--sky);
+      margin-top: 2.5rem;
       text-align: center;
       pointer-events: none;
+      transition: color 0.3s ease;
+    }
+    .cake-lux-prompt.active {
+      color: var(--accent);
     }
 
     /* MODAL */
@@ -555,35 +592,82 @@ export default function App() {
       {/* INTRO INTERACTIVE CAKE SCREEN */}
       {!hideCakeScreen && (
         <div className={`cake-overlay ${cakeSliced ? "hidden" : ""}`}>
-          <div className={`cake-box ${cakeSliced ? "cake-sliced" : ""}`}>
+          <div className={`cake-viewport ${cakeSliced ? "cake-is-split" : ""}`}>
             
-            <div 
-              className="cutting-sensor" 
-              onMouseMove={() => {
-                if (!cakeSliced) {
-                  setCakeSliced(true);
-                  setTimeout(() => setHideCakeScreen(true), 1200);
-                }
-              }} 
-            />
+            {/* Click-and-Drag Surface Sensor Layer */}
+            {!cakeSliced && (
+              <div 
+                className="cake-cut-surface"
+                onMouseDown={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setIsDragging(true);
+                  setDragPath({
+                    startY: e.clientY - rect.top,
+                    currentY: e.clientY - rect.top,
+                    posX: e.clientX - rect.left
+                  });
+                }}
+                onMouseMove={(e) => {
+                  if (!isDragging) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const currentY = e.clientY - rect.top;
+                  
+                  setDragPath(prev => ({ ...prev, currentY }));
+                  
+                  // Cut verification threshold calculations
+                  const totalDelta = currentY - dragPath.startY;
+                  if (totalDelta > 240) {
+                    setIsDragging(false);
+                    setCakeSliced(true);
+                    setTimeout(() => setHideCakeScreen(true), 1300);
+                  }
+                }}
+                onMouseUp={() => setIsDragging(false)}
+                onMouseLeave={() => setIsDragging(false)}
+              />
+            )}
 
-            {/* Left Half of Cake */}
-            <div className="cake-half left">
-              <div className="cake-frosting">
-                <div className="cake-text">Happy Birthday<br />{BIRTHDAY_PERSON}</div>
+            {/* Trailing Neon Slice Vector overlay */}
+            {isDragging && (
+              <div 
+                className="slash-laser-line"
+                style={{
+                  left: `${dragPath.posX}px`,
+                  top: `${Math.min(dragPath.startY, dragPath.currentY)}px`,
+                  height: `${Math.abs(dragPath.currentY - dragPath.startY)}px`
+                }}
+              />
+            )}
+
+            {/* Central Synchronized Cake Wrapper Asset */}
+            <div className="cake-wrapper">
+              
+              {/* Left Half Component Architecture */}
+              <div className="cake-plate-half left">
+                <div className="cake-body-render" />
+                <div className="cake-piping-text">
+                  <span>Happy Birthday</span>
+                  <span style={{ color: "var(--gold)", fontSize: "2.5rem", marginTop: "4px" }}>{BIRTHDAY_PERSON}</span>
+                </div>
               </div>
-            </div>
 
-            {/* Right Half of Cake */}
-            <div className="cake-half right">
-              <div className="cake-frosting">
-                <div className="cake-text">Happy Birthday<br />{BIRTHDAY_PERSON}</div>
+              {/* Right Half Component Architecture */}
+              <div className="cake-plate-half right">
+                <div className="cake-body-render" />
+                <div className="cake-piping-text">
+                  <span>Happy Birthday</span>
+                  <span style={{ color: "var(--gold)", fontSize: "2.5rem", marginTop: "4px" }}>{BIRTHDAY_PERSON}</span>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-          <p className="cake-prompt">
-            {cakeSliced ? "✨ Sliced beautifully! ✨" : "Swipe your cursor down the center to cut the cake..."}
+          <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
+            {cakeSliced 
+              ? "✨ Sliced beautifully! Reveal portal opening... ✨" 
+              : isDragging 
+              ? "Hold down & drag through the base to slice..." 
+              : `Left click & drag all the way down to cut the cake, ${BIRTHDAY_PERSON}...`}
           </p>
         </div>
       )}
