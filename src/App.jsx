@@ -399,11 +399,11 @@ export default function App() {
     .pvb-done-title{font-family:'Caveat',cursive;font-size:1.8rem;color:#4A8A5A}
     .pvb-done-sub{font-size:13px;color:var(--dusty);margin-top:.5rem;line-height:1.6}
 
-    /* HIGH-END INTERACTIVE MASKED REVEAL LAYER COMPILER */
+    /* REFINED INTERACTIVE ZERO-GAP MASKED CAKE OVERLAY */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #142038 0%, #050a12 100%);
+      background: radial-gradient(circle at center, #141f36 0%, #060b14 100%);
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -412,8 +412,8 @@ export default function App() {
       transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1);
       user-select: none;
       
-      /* Explicit URL-encoded custom vector mask to guarantee rendering across engines */
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3E🔪%3C/text%3E%3C/svg%3E") 4 24, ns-resize !important;
+      /* Fully Web-Encoded SVG standard fallback definition to force crosshair logic to look like a knife */
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30'%3E🔪%3C/text%3E%3C/svg%3E") 4 28, ns-resize !important;
     }
     .cake-overlay.hidden {
       opacity: 0;
@@ -433,7 +433,7 @@ export default function App() {
       height: 400px;
     }
     
-    /* Segment Splits with exact Clip Paths to eliminate line separation views completely */
+    /* 1px overlap configuration stops hairline pixel rendering gaps completely */
     .cake-plate-half {
       position: absolute;
       inset: 0;
@@ -466,7 +466,7 @@ export default function App() {
         0 20px 45px rgba(0,0,0,0.65);
     }
     
-    /* Concentric loops to create realistic piping borders */
+    /* Elaborate piping laces and gold pearl wreath loops */
     .cake-body-render::before {
       content: '';
       position: absolute;
@@ -564,6 +564,13 @@ export default function App() {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .cake-prompt-wrapper {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(4px);
     }
     .cake-lux-prompt {
       font-family: 'Caveat', cursive;
@@ -694,7 +701,7 @@ export default function App() {
               />
             )}
 
-            {/* Masked Cake Container - Overlapped slightly to solve seam line gap views */}
+            {/* Cake Wrapper Using Clip-Paths with fine edge subpixel parameters overlap */}
             <div className="cake-wrapper">
               
               {/* Left Side rendering segment */}
@@ -722,15 +729,17 @@ export default function App() {
             </div>
           </div>
           
-          {/* Prompts container completely separated below the cake radius */}
+          {/* Prompts container isolated safely lower below the cake radius */}
           <div className="cake-prompt-container">
-            <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
-              {cakeSliced 
-                ? "✨ Sliced beautifully! Opening website... ✨" 
-                : isDragging 
-                ? "Hold down & pull down to make the cut..." 
-                : `Grab your knife cursor & slice down through the center, ${BIRTHDAY_PERSON}...`}
-            </p>
+            <div className="cake-prompt-wrapper">
+              <p className={`cake-lux-prompt ${isDragging ? "active" : ""}`}>
+                {cakeSliced 
+                  ? "✨ Sliced beautifully! Opening website... ✨" 
+                  : isDragging 
+                  ? "Hold down & pull down to make the cut..." 
+                  : `Grab your knife cursor & slice down through the center, ${BIRTHDAY_PERSON}...`}
+              </p>
+            </div>
           </div>
         </div>
       )}
