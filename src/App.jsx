@@ -53,7 +53,10 @@ export default function App() {
   const [memories, setMemories]     = useState([]);
   const [loading, setLoading]       = useState(true);
   const [memTab, setMemTab]         = useState("stories");
-  const [isCakeCut, setIsCakeCut] = useState(false);
+  
+  // Cake overlay interaction state variables
+  const [cakeSliced, setCakeSliced]   = useState(false);
+  const [hideCakeScreen, setHideCakeScreen] = useState(false);
 
   // memory form
   const [authEmail, setAuthEmail]   = useState("");
@@ -372,7 +375,7 @@ export default function App() {
     .mem-read{font-size:11px;color:var(--sky);border:1px solid var(--pale);border-radius:99px;padding:3px 10px;transition:all .2s}
     .mem-card:hover .mem-read{border-color:var(--sky);background:var(--frost)}
 
-    /* VIDEO WISH FORM styles kept minimal if needed, safely purged standard features */
+    /* VIDEO WISH FORM STYLES */
     .post-vid-box{background:var(--frost);border:1px solid var(--pale);border-radius:20px;padding:2rem;margin-top:2rem}
     .pvb-title{font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.4rem}
     .pvb-desc{font-size:.9rem;color:var(--dusty);margin-bottom:1.5rem;line-height:1.7;font-weight:300}
@@ -399,50 +402,87 @@ export default function App() {
     .empty-icon{font-size:3rem;margin-bottom:1rem}
     .empty-state p{color:var(--dusty);font-size:.95rem;line-height:1.7}
 
-    /* CAKE REVEAL SCREEN */
+    /* TOP-DOWN CAKE REVEAL SCREEN */
     .cake-overlay {
       position: fixed;
       inset: 0;
-      background: var(--navy);
+      background: #060d1a;
       z-index: 999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: all 1s ease-in-out;
+      transition: opacity 0.8s ease-in-out;
     }
-    .cake-overlay.fade-out {
+    .cake-overlay.hidden {
       opacity: 0;
       pointer-events: none;
-      transform: scale(1.05);
     }
-    .cake-container {
-      text-align: center;
-      cursor: pointer;
+    .cake-box {
       position: relative;
+      width: 320px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cake-half {
+      position: absolute;
+      width: 160px;
+      height: 320px;
+      overflow: hidden;
+      transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      pointer-events: none;
+    }
+    .cake-half.left { left: 0; }
+    .cake-half.right { right: 0; }
+    
+    .cake-sliced .cake-half.left {
+      transform: translateX(-140px) rotate(-8deg);
+    }
+    .cake-sliced .cake-half.right {
+      transform: translateX(140px) rotate(8deg);
+    }
+    .cake-frosting {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, #e6b2c2 40%, #df9bb0 70%, #cc7a93 100%);
+      border-radius: 50%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.15);
+      border: 8px solid #fdf0f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cake-half.left .cake-frosting { left: 0; }
+    .cake-half.right .cake-frosting { right: -160px; }
+    
+    .cake-text {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #7d2e43;
+      text-align: center;
+      width: 240px;
+      white-space: normal;
+      line-height: 1.3;
+      user-select: none;
+      text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
+    }
+    .cutting-sensor {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      cursor: crosshair;
     }
     .cake-prompt {
       font-family: 'Caveat', cursive;
       font-size: 2rem;
       color: var(--accent);
-      margin-top: 2rem;
-      animation: pulse 2s infinite;
-    }
-    .knife-cursor {
-      font-size: 3rem;
-      position: absolute;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      animation: slice 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; transform: scale(0.98); }
-      50% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes slice {
-      0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
-      50% { transform: translate(-20px, 30px) rotate(-45deg); }
+      margin-top: 3rem;
+      text-align: center;
+      pointer-events: none;
     }
 
     /* MODAL */
@@ -513,15 +553,40 @@ export default function App() {
       <style>{CSS}</style>
 
       {/* INTRO INTERACTIVE CAKE SCREEN */}
-      <div className={`cake-overlay ${isCakeCut ? "fade-out" : ""}`}>
-        <div className="cake-container" onClick={() => setIsCakeCut(true)}>
-          <span className="knife-cursor">🔪</span>
-          <div style={{ fontSize: "7rem", userSelect: "none", filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))" }}>
-            🎂
+      {!hideCakeScreen && (
+        <div className={`cake-overlay ${cakeSliced ? "hidden" : ""}`}>
+          <div className={`cake-box ${cakeSliced ? "cake-sliced" : ""}`}>
+            
+            <div 
+              className="cutting-sensor" 
+              onMouseMove={() => {
+                if (!cakeSliced) {
+                  setCakeSliced(true);
+                  setTimeout(() => setHideCakeScreen(true), 1200);
+                }
+              }} 
+            />
+
+            {/* Left Half of Cake */}
+            <div className="cake-half left">
+              <div className="cake-frosting">
+                <div className="cake-text">Happy Birthday<br />{BIRTHDAY_PERSON}</div>
+              </div>
+            </div>
+
+            {/* Right Half of Cake */}
+            <div className="cake-half right">
+              <div className="cake-frosting">
+                <div className="cake-text">Happy Birthday<br />{BIRTHDAY_PERSON}</div>
+              </div>
+            </div>
+
           </div>
-          <p className="cake-prompt">Make a wish & click to cut the cake, {BIRTHDAY_PERSON}...</p>
+          <p className="cake-prompt">
+            {cakeSliced ? "✨ Sliced beautifully! ✨" : "Swipe your cursor down the center to cut the cake..."}
+          </p>
         </div>
-      </div>
+      )}
 
       {/* NAV */}
       <nav className="nav">
