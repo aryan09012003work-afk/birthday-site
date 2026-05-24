@@ -19,18 +19,7 @@ const APPROVED_EMAILS = [
   // ← add more approved emails here
 ];
 
-// ── HOW TO ADD PHOTOS ──────────────────────────────────────
-// Option A (recommended): Upload photo to https://imgbb.com
-//   → copy the Direct Link → paste as a string below
-//
-// Option B: Convert to base64 at https://base64.guru/converter/encode/image
-//   → copy the full "data:image/jpeg;base64,..." string → paste below
-//
-// Example:
-//   "https://i.ibb.co/abc123/photo1.jpg",
-//   "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
 const BIRTHDAY_PHOTOS = [
-  // paste your photo URLs or base64 strings here, one per line:
      "https://i.ibb.co/r2wSnCrX/Photo-2.jpg",
      "https://i.ibb.co/3yL75yXk/Photo-3.jpg",
      "https://i.ibb.co/5gXWjg3D/Photo-6.jpg",
@@ -41,12 +30,7 @@ const BIRTHDAY_PHOTOS = [
      "https://i.ibb.co/k6WBQV9W/Photo-11.jpg",
      "https://i.ibb.co/R4TBqR56/Photo-12.jpg",
      "https://i.ibb.co/dsKjY1rr/Photo-10.jpg"
-  
 ];
-
-// VIDEO SIZE LIMIT — videos under this size (in MB) get stored
-// and will persist. Larger videos show during the session only.
-const VIDEO_PERSIST_LIMIT_MB = 3;
 
 const PHOTO_PLACEHOLDER = (label = "📸") =>
   `data:image/svg+xml,${encodeURIComponent(
@@ -67,8 +51,6 @@ const WORD_TAGS = ["Deep Roots","Late Night Laughs","Beautiful Mystery","Quiet E
 // ════════════════════════════════════════════════════════════
 export default function App() {
   const [memories, setMemories]     = useState([]);
-  const [vidWishes, setVidWishes]   = useState([]);  // stored (small/persisted)
-  const [sessionVids, setSessionVids] = useState([]); // large videos (session only)
   const [loading, setLoading]       = useState(true);
   const [memTab, setMemTab]         = useState("stories");
 
@@ -76,20 +58,8 @@ export default function App() {
   const [authEmail, setAuthEmail]   = useState("");
   const [authStatus, setAuthStatus] = useState("idle");
   const [formData, setFormData]     = useState({ name:"", tagline:"", howWeMet:"", favouriteMoment:"", message:"" });
-  const [memVideo, setMemVideo]     = useState(null);
-  const [memVideoURL, setMemVideoURL] = useState(null);
   const [submitStatus, setSubmitStatus] = useState("idle");
   const [openCard, setOpenCard]     = useState(null);
-
-  // video-wish form
-  const [vwEmail, setVwEmail]       = useState("");
-  const [vwAuthStatus, setVwAuthStatus] = useState("idle");
-  const [vwName, setVwName]         = useState("");
-  const [vwFile, setVwFile]         = useState(null);
-  const [vwPreviewURL, setVwPreviewURL] = useState(null);
-  const [vwSubmit, setVwSubmit]     = useState("idle");
-  const [vwSizeWarning, setVwSizeWarning] = useState(false);
-  const [playingVid, setPlayingVid] = useState(null);
 
   const [loaded, setLoaded]         = useState(false);
 
@@ -100,11 +70,9 @@ export default function App() {
   const [blName, setBlName] = useState("");
   const [blSuggestion, setBlSuggestion] = useState("");
   const [blSubmitStatus, setBlSubmitStatus] = useState("idle");
-  const [votedIds, setVotedIds] = useState([]); // Keeps track of what they voted for this session
+  const [votedIds, setVotedIds] = useState([]); 
 
   useEffect(() => { loadAll(); setTimeout(() => setLoaded(true), 200); }, []);
-
-  
 
   async function loadAll() {
     try {
@@ -115,10 +83,6 @@ export default function App() {
         howWeMet: m.how_we_met,
         favouriteMoment: m.favourite_moment
       })));
-
-      const { data: vids } = await supabase
-        .from("video_wishes").select("*").order("timestamp", { ascending: true });
-      if (vids) setVidWishes(vids.map(v => ({ ...v, videoURL: v.video_url })));
 
       // Fetch Bucket List Items (Sorted by highest votes first)
       const { data: bucket } = await supabase
@@ -152,49 +116,6 @@ export default function App() {
     }
   }
 
-  async function handleVwSubmit() {
-    if (!vwName || !vwFile) return;
-    setVwSubmit("submitting");
-    try {
-      const fileName = `${Date.now()}-${vwFile.name.replace(/\s/g, "_")}`;
-      const { error: uploadError } = await supabase.storage
-        .from("videos").upload(fileName, vwFile);
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("videos").getPublicUrl(fileName);
-      const publicUrl = urlData.publicUrl;
-
-      const { data } = await supabase.from("video_wishes").insert([{
-        email: vwEmail.trim().toLowerCase(),
-        name: vwName,
-        video_url: publicUrl,
-        timestamp: Date.now()
-      }]).select().single();
-
-      if (data) {
-        setVidWishes(prev => [...prev, { ...data, videoURL: publicUrl }]);
-        setVwSubmit("done");
-      }
-    } catch (e) {
-      console.error("Video upload error:", e);
-      alert("Upload failed. Try compressing the video first.");
-      setVwSubmit("idle");
-    }
-  }
-
-
-  function toBase64(file) {
-    return new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = rej;
-      r.readAsDataURL(file);
-    });
-  }
-
-  function fileSizeMB(file) { return file.size / (1024 * 1024); }
-
   // ── Memory auth ──────────────────────────────────────────
   function checkEmail() {
     setAuthStatus("checking");
@@ -203,18 +124,6 @@ export default function App() {
       if (memories.some(m => m.email === c)) { setAuthStatus("duplicate"); return; }
       if (APPROVED_EMAILS.map(e => e.toLowerCase()).includes(c)) { setAuthStatus("approved"); return; }
       setAuthStatus("denied");
-    }, 700);
-  }
-
-  // ── Video-wish auth ──────────────────────────────────────
-  function checkVwEmail() {
-    setVwAuthStatus("checking");
-    setTimeout(() => {
-      const c = vwEmail.trim().toLowerCase();
-      const allVids = [...vidWishes, ...sessionVids];
-      if (allVids.some(v => v.email === c)) { setVwAuthStatus("duplicate"); return; }
-      if (APPROVED_EMAILS.map(e => e.toLowerCase()).includes(c)) { setVwAuthStatus("approved"); return; }
-      setVwAuthStatus("denied");
     }, 700);
   }
 
@@ -228,48 +137,19 @@ export default function App() {
     }, 700);
   }
 
-  // ── Handle video file selection for wish ────────────────
-  function handleVwFileSelect(e) {
-    const f = e.target.files[0];
-    if (!f) return;
-    const mb = fileSizeMB(f);
-    if (mb > 100) { alert("Video is too large (max 100MB). Please compress it first."); return; }
-    setVwFile(f);
-    setVwPreviewURL(URL.createObjectURL(f)); // instant preview via object URL
-    setVwSizeWarning(mb > VIDEO_PERSIST_LIMIT_MB);
-  }
-
-  // ── Handle video file selection for memory ───────────────
-  function handleMemVideoSelect(e) {
-    const f = e.target.files[0];
-    if (!f) return;
-    if (fileSizeMB(f) > 100) { alert("Video is too large (max 100MB)."); return; }
-    setMemVideo(f);
-    setMemVideoURL(URL.createObjectURL(f)); // instant preview
-  }
-
   // ── Submit memory ────────────────────────────────────────
   async function handleMemSubmit() {
     if (!formData.name || !formData.howWeMet || !formData.message) return;
     setSubmitStatus("submitting");
 
-    let videoData = null;
-    if (memVideo && fileSizeMB(memVideo) <= VIDEO_PERSIST_LIMIT_MB) {
-      try { videoData = await toBase64(memVideo); } catch (_) {}
-    }
-
     const mem = {
       id: `mem-${Date.now()}`,
       email: authEmail.trim().toLowerCase(),
       ...formData,
-      videoData,        // stored if small enough
-      videoURL: memVideoURL, // session-only object URL for immediate display
       timestamp: Date.now(),
     };
 
     await saveMemory(mem);
-    // Keep session video URL in state for immediate display
-    setMemories(prev => prev.map(m => m.id === mem.id ? { ...m, videoURL: memVideoURL } : m));
     setSubmitStatus("done");
   }
 
@@ -303,9 +183,8 @@ export default function App() {
 
   // ── Bucket List Upvoting Utility ──────────────────────────
   async function handleVote(id, currentVotes) {
-    if (votedIds.includes(id)) return; // Prevent duplicate voting in the same session
+    if (votedIds.includes(id)) return; 
 
-    // Optimistic UI Update (Snappy change on client-side instantly)
     setVotedIds(prev => [...prev, id]);
     setBucketItems(prev => prev.map(item => item.id === id ? { ...item, votes: item.votes + 1 } : item).sort((a, b) => b.votes - a.votes));
 
@@ -319,13 +198,10 @@ export default function App() {
     }
   }
 
-
   function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); }
   function initials(n) { return n.split(" ").map(w => w[0]).join("").toUpperCase().slice(0,2); }
   function formatDate(ts) { return new Date(ts).toLocaleDateString("en-IN", { day:"numeric", month:"long", year:"numeric" }); }
 
-  // Merge persisted + session videos, deduplicate by id
-  const allVidWishes = [...vidWishes, ...sessionVids.filter(sv => !vidWishes.some(v => v.email === sv.email))];
   const marqueeItems = [...WORD_TAGS, ...WORD_TAGS];
   const stripPhotos = [...photos, ...photos];
   const finalePhotos = photos.slice(0, 5);
@@ -333,17 +209,17 @@ export default function App() {
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
     :root {
-      --navy: #0b1528;         /* Dark midnight blue background background */
-      --blue: #162a4d;         /* Deep royal shadow blue */
-      --mid: #254a85;          /* Vibrant indigo tone */
-      --sky: #a3c2ec;          /* Soft pastel mist blue */
-      --pale: #cbdcf7;         /* Delicate steel lilac-blue */
-      --frost: #e3ecf8;        /* Pearl cream tinted sky reflection */
-      --white: #f5f8fc;        /* Bright ivory cream canvas */
-      --ink: #0b1526;          /* Dark charcoal overlay */
-      --dusty: #5c7299;        /* Sophisticated slate periwinkle */
-      --accent: #dca38f;       /* Dusty blush rose gold accent */
-      --gold: #e2b469;         /* Sunset amber-yellow highlight */
+      --navy: #0b1528;         
+      --blue: #162a4d;         
+      --mid: #254a85;          
+      --sky: #a3c2ec;          
+      --pale: #cbdcf7;         
+      --frost: #e3ecf8;        
+      --white: #f5f8fc;        
+      --ink: #0b1526;          
+      --dusty: #5c7299;        
+      --accent: #dca38f;       
+      --gold: #e2b469;         
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     .site{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--ink);overflow-x:hidden}
@@ -373,7 +249,7 @@ export default function App() {
     .hero-eyebrow {
       font-family: 'Caveat', cursive;
       font-weight: 600;
-      color: var(--white); /* This makes "Hello," text pure white */
+      color: var(--white); 
     }
     .hero-age, .finale-sign, .strip-label, .gallery-caption {
       font-family: 'Caveat', cursive;
@@ -398,10 +274,7 @@ export default function App() {
     .hero-date{margin-top:1.5rem;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:rgba(200,222,255,.25)}
     .hero-right{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;height:520px}
     @media(max-width:768px){.hero-right{height:320px}}
-    /* ── HERO ── */
-    /* ... keep your existing hero background, grid, and text styles up here ... */
 
-    /* POLAROID - Increased size and offset tracking */
     .polaroid {
       position: absolute;
       background: white;
@@ -420,39 +293,18 @@ export default function App() {
       border-radius: 2px;
     }
 
-    /* Balanced structural spread for desktop layouts */
-    .pol-0 { 
-      width: 240px; 
-      height: 290px; 
-      transform: rotate(-11deg) translate(-95px, -35px); 
-      z-index: 1; 
-    }
-    .pol-1 { 
-      width: 235px; 
-      height: 285px; 
-      transform: rotate(6deg) translate(80px, -15px); 
-      z-index: 2; 
-    }
-    .pol-2 { 
-      width: 230px; 
-      height: 280px; 
-      transform: rotate(-4deg) translate(-5px, 65px); 
-      z-index: 3; 
-    }
+    .pol-0 { width: 240px; height: 290px; transform: rotate(-11deg) translate(-95px, -35px); z-index: 1; }
+    .pol-1 { width: 235px; height: 285px; transform: rotate(6deg) translate(80px, -15px); z-index: 2; }
+    .pol-2 { width: 230px; height: 280px; transform: rotate(-4deg) translate(-5px, 65px); z-index: 3; }
 
-    /* Seamless scaling adjustment on hover */
     .pol-0:hover, .pol-1:hover, .pol-2:hover { 
       z-index: 20; 
       transform: rotate(0deg) scale(1.05) translateY(-10px); 
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); 
     }
 
-    /* Balanced structural spread for small responsive screens / mobile */
     @media(max-width:768px) {
-      .hero-right {
-        height: 380px;
-        margin-top: 2rem;
-      }
+      .hero-right { height: 380px; margin-top: 2rem; }
       .pol-0 { width: 145px; height: 180px; transform: rotate(-11deg) translate(-60px, -20px); }
       .pol-1 { width: 140px; height: 175px; transform: rotate(6deg) translate(55px, -10px); }
       .pol-2 { width: 135px; height: 170px; transform: rotate(-4deg) translate(-5px, 45px); }
@@ -518,24 +370,8 @@ export default function App() {
     .mem-date{font-size:10px;color:#bcc8e0;letter-spacing:.05em}
     .mem-read{font-size:11px;color:var(--sky);border:1px solid var(--pale);border-radius:99px;padding:3px 10px;transition:all .2s}
     .mem-card:hover .mem-read{border-color:var(--sky);background:var(--frost)}
-    .mem-vid-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--mid);background:var(--frost);border:1px solid var(--pale);border-radius:99px;padding:2px 8px;margin-top:8px}
 
-    /* VIDEO WISHES GRID */
-    .vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-top:2rem}
-    .vid-wish-card{background:var(--navy);border:1px solid rgba(74,144,217,.2);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
-    .vid-wish-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(15,28,63,.35);border-color:var(--sky)}
-    .vid-thumb-wrap{position:relative;width:100%;aspect-ratio:9/12;overflow:hidden;background:var(--blue)}
-    .vid-thumb{width:100%;height:100%;object-fit:cover;display:block}
-    .vid-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,28,63,.4);transition:background .2s}
-    .vid-wish-card:hover .vid-play-overlay{background:rgba(15,28,63,.55)}
-    .vid-play-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all .2s}
-    .vid-wish-card:hover .vid-play-btn{background:rgba(255,255,255,.28);transform:scale(1.1)}
-    .vid-wish-meta{padding:1rem 1.2rem}
-    .vid-wish-name{font-size:14px;font-weight:500;color:var(--white)}
-    .vid-wish-date{font-size:10px;color:rgba(200,222,255,.35);margin-top:2px}
-    .vid-session-tag{display:inline-block;font-size:9px;color:var(--gold);border:1px solid rgba(240,192,96,.3);border-radius:99px;padding:1px 7px;margin-top:4px;letter-spacing:.04em}
-
-    /* VIDEO WISH FORM */
+    /* VIDEO WISH FORM styles kept minimal if needed, safely purged standard features */
     .post-vid-box{background:var(--frost);border:1px solid var(--pale);border-radius:20px;padding:2rem;margin-top:2rem}
     .pvb-title{font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.4rem}
     .pvb-desc{font-size:.9rem;color:var(--dusty);margin-bottom:1.5rem;line-height:1.7;font-weight:300}
@@ -547,19 +383,8 @@ export default function App() {
     .pvb-vbtn:disabled{opacity:.4;cursor:default}
     .pvb-s-ok{font-size:12px;color:#4A8A5A;margin-bottom:.8rem;font-weight:500}
     .pvb-s-no{font-size:12px;color:#A85A5A;margin-bottom:.8rem}
-    .pvb-s-dup{font-size:12px;color:#A87A3A;margin-bottom:.8rem}
     .lock-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dusty);margin-top:6px;opacity:.7}
 
-    /* Upload box */
-    .upload-box{position:relative;border:2px dashed var(--pale);border-radius:14px;padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:white;margin-bottom:1rem}
-    .upload-box:hover{border-color:var(--sky);background:var(--frost)}
-    .upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-    .upload-icon{font-size:2.2rem;margin-bottom:.5rem}
-    .upload-main-txt{font-size:14px;color:var(--blue);font-weight:500;margin-bottom:.2rem}
-    .upload-sub-txt{font-size:12px;color:var(--dusty)}
-    .vid-preview-box{margin-top:.8rem;border-radius:12px;overflow:hidden;background:black;position:relative}
-    .vid-preview-box video{width:100%;max-height:260px;display:block}
-    .vid-size-warn{background:rgba(240,192,96,.12);border:1px solid rgba(240,192,96,.35);border-radius:10px;padding:.7rem 1rem;font-size:12px;color:#7A5A00;margin-top:.6rem;line-height:1.5}
     .pvb-submit{padding:13px 30px;border-radius:10px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em;transition:all .25s;box-shadow:0 6px 20px rgba(42,91,168,.35)}
     .pvb-submit:hover{transform:translateY(-2px)}
     .pvb-submit:disabled{opacity:.4;cursor:default;transform:none}
@@ -576,10 +401,6 @@ export default function App() {
     /* MODAL */
     .mo{position:fixed;inset:0;z-index:200;background:rgba(10,22,40,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:2rem}
     .mo-box{background:var(--white);border-radius:24px;max-width:580px;width:100%;max-height:85vh;overflow-y:auto;padding:2.5rem;position:relative;border:1px solid var(--pale);box-shadow:0 40px 80px rgba(10,22,40,.3)}
-    .mo-vid-box{background:var(--navy);border-radius:24px;max-width:440px;width:100%;position:relative;overflow:hidden;box-shadow:0 40px 80px rgba(10,22,40,.5)}
-    .mo-vid-full{width:100%;display:block}
-    .mo-close-light{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;transition:all .2s;z-index:10}
-    .mo-close-light:hover{background:rgba(0,0,0,.6)}
     .mo-close-dark{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--pale);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--dusty);transition:all .2s}
     .mo-close-dark:hover{border-color:var(--ink);color:var(--ink)}
     .mo-name{font-family:'Instrument Serif',serif;font-size:1.8rem;margin-bottom:.3rem}
@@ -588,7 +409,6 @@ export default function App() {
     .mo-text{font-size:14px;color:#2a3f5f;line-height:1.75;font-weight:300}
     .mo-msg{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.2rem;color:var(--blue);line-height:1.6}
     .mo-div{height:1px;background:var(--pale);margin:1.5rem 0}
-    .mo-vid{width:100%;border-radius:14px;margin-top:.8rem}
 
     /* WRITE SECTION */
     .write-wrap{background:var(--navy);position:relative;overflow:hidden}
@@ -617,16 +437,6 @@ export default function App() {
     .sbtn{padding:15px 36px;border-radius:12px;background:linear-gradient(135deg,var(--mid),var(--sky));color:white;font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.06em;transition:all .25s;box-shadow:0 8px 24px rgba(42,91,168,.4);align-self:flex-start}
     .sbtn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(42,91,168,.5)}
     .sbtn:disabled{opacity:.4;cursor:default;transform:none}
-    .w-upload-box{position:relative;border:2px dashed rgba(74,144,217,.22);border-radius:14px;padding:1.8rem;text-align:center;cursor:pointer;transition:border-color .2s;background:rgba(255,255,255,.03)}
-    .w-upload-box:hover{border-color:var(--sky)}
-    .w-upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-    .w-upload-icon{font-size:2rem;margin-bottom:.5rem}
-    .w-upload-txt{font-size:13px;color:rgba(200,222,255,.35)}
-    .w-vid-preview{width:100%;border-radius:10px;margin-top:.8rem;max-height:200px}
-    .done-box{text-align:center;padding:3rem 2rem;background:rgba(126,203,161,.07);border:1px solid rgba(126,203,161,.18);border-radius:16px}
-    .done-icon{font-size:3rem;margin-bottom:1rem}
-    .done-title{font-family:'Caveat',cursive;font-size:2rem;color:#7ECBA1;margin-bottom:.75rem}
-    .done-txt{font-size:14px;color:rgba(200,222,255,.45);line-height:1.7;font-weight:300}
 
     /* FINALE */
     .finale{background:var(--navy);text-align:center;padding:8rem 2rem;position:relative;overflow:hidden}
@@ -648,7 +458,7 @@ export default function App() {
 
     .fade{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
     .fade.in{opacity:1;transform:translateY(0)}
-    @media(max-width:600px){.wgrid{grid-template-columns:1fr}.vid-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.wgrid{grid-template-columns:1fr}}
   `;
 
   return (
@@ -718,11 +528,11 @@ export default function App() {
         </div>
       </div>
 
-      {/* MEMORIES + VIDEO WISHES */}
+      {/* MEMORIES + BUCKET LIST */}
       <section id="memories" className="section">
         <p className="sec-label">Fragments & Stories</p>
         <h2 className="sec-title">What people remember</h2>
-        <p className="sec-desc">Memories, moments, and video wishes — all in one place.</p>
+        <p className="sec-desc">Memories, moments, and upcoming adventures — all in one place.</p>
 
         {BIRTHDAY_PHOTOS.length > 0 && (
           <div className="gallery-row">
@@ -738,9 +548,6 @@ export default function App() {
         <div className="tabs">
           <button className={`tab-btn ${memTab === "stories" ? "active" : ""}`} onClick={() => setMemTab("stories")}>
             💌 Written Memories <span className="tab-count">{memories.length}</span>
-          </button>
-          <button className={`tab-btn ${memTab === "videos" ? "active" : ""}`} onClick={() => setMemTab("videos")}>
-            🎥 Video Wishes <span className="tab-count">{allVidWishes.length}</span>
           </button>
           <button className={`tab-btn ${memTab === "bucket" ? "active" : ""}`} onClick={() => setMemTab("bucket")}>
             🎯 {BIRTHDAY_PERSON}'s Bucket List <span className="tab-count">{bucketItems.length}</span>
@@ -765,7 +572,6 @@ export default function App() {
                     </div>
                   </div>
                   <p className="mem-msg">"{mem.message}"</p>
-                  {(mem.videoData || mem.videoURL) && <div className="mem-vid-badge">▶ Video attached</div>}
                   <div className="mem-footer">
                     <span className="mem-date">{formatDate(mem.timestamp)}</span>
                     <span className="mem-read">Read →</span>
@@ -774,110 +580,6 @@ export default function App() {
               ))
             }
           </div>
-        )}
-
-        {/* VIDEOS TAB */}
-        {memTab === "videos" && (
-          <>
-            <div className="vid-grid">
-              {loading
-                ? <div className="empty-state"><div className="empty-icon">⏳</div><p>Loading…</p></div>
-                : allVidWishes.length === 0
-                ? <div className="empty-state"><div className="empty-icon">🎥</div><p>No video wishes yet — be the first to post one below!</p></div>
-                : allVidWishes.map(vw => (
-                  <div key={vw.id} className="vid-wish-card" onClick={() => setPlayingVid(vw)}>
-                    <div className="vid-thumb-wrap">
-                      <video
-                        className="vid-thumb"
-                        src={vw.videoURL || vw.videoData}
-                        muted playsInline preload="metadata"
-                      />
-                      <div className="vid-play-overlay">
-                        <div className="vid-play-btn">▶</div>
-                      </div>
-                    </div>
-                    <div className="vid-wish-meta">
-                      <p className="vid-wish-name">{vw.name}</p>
-                      <p className="vid-wish-date">{formatDate(vw.timestamp)}</p>
-                      {vw.sessionOnly && <span className="vid-session-tag">visible this session</span>}
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-
-            {/* Post Video Wish Form */}
-            <div className="post-vid-box">
-              <p className="pvb-title">Post your video wish 🎥</p>
-              <p className="pvb-desc">Verify your email, then upload a video birthday message for her.</p>
-
-              {vwSubmit === "done" ? (
-                <div className="pvb-done">
-                  <div className="pvb-done-icon">🎉</div>
-                  <p className="pvb-done-title">Video wish posted!</p>
-                  <p className="pvb-done-sub">Your video is now visible on this page.</p>
-                </div>
-              ) : (
-                <>
-                  <div className="pvb-row">
-                    <input className="pvb-input" type="email" placeholder="your email address"
-                      value={vwEmail}
-                      onChange={e => { setVwEmail(e.target.value); setVwAuthStatus("idle"); }}
-                      disabled={vwAuthStatus === "approved"} />
-                    {vwAuthStatus !== "approved" && (
-                      <button className="pvb-vbtn" onClick={checkVwEmail}
-                        disabled={!vwEmail || vwAuthStatus === "checking"}>
-                        {vwAuthStatus === "checking" ? "Checking…" : "Verify"}
-                      </button>
-                    )}
-                  </div>
-                  {vwAuthStatus === "approved" && <p className="pvb-s-ok">✓ Verified! Upload your video below.</p>}
-                  {vwAuthStatus === "denied" && <p className="pvb-s-no">✗ This email isn't on the approved list.</p>}
-                  {vwAuthStatus === "duplicate" && <p className="pvb-s-dup">You've already posted a video wish.</p>}
-                  <p className="lock-row"><span>🔒</span> Only approved emails can post</p>
-
-                  {vwAuthStatus === "approved" && (
-                    <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <div>
-                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your name *</label>
-                        <input className="pvb-input" style={{ width: "100%" }}
-                          placeholder="How you want to appear on your card"
-                          value={vwName} onChange={e => setVwName(e.target.value)} />
-                      </div>
-
-                      <div>
-                        <label style={{ display: "block", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dusty)", marginBottom: 7 }}>Your video *</label>
-                        <div className="upload-box">
-                          <input type="file" accept="video/*" onChange={handleVwFileSelect} />
-                          {vwPreviewURL ? (
-                            <div className="vid-preview-box">
-                              <video src={vwPreviewURL} controls style={{ width: "100%", maxHeight: 260 }} />
-                            </div>
-                          ) : (
-                            <>
-                              <div className="upload-icon">🎥</div>
-                              <p className="upload-main-txt">Click to select your video</p>
-                              <p className="upload-sub-txt">MP4, MOV, WEBM · up to 100MB</p>
-                            </>
-                          )}
-                        </div>
-                        {vwSizeWarning && (
-                          <div className="vid-size-warn">
-                            ⚡ Your video is over {VIDEO_PERSIST_LIMIT_MB}MB, so it will show on screen now but won't be stored permanently across sessions. To make it persist, compress it first using <strong>handbrake.fr</strong> or <strong>clideo.com/compress-video</strong>.
-                          </div>
-                        )}
-                      </div>
-
-                      <button className="pvb-submit" onClick={handleVwSubmit}
-                        disabled={!vwName || !vwFile || vwSubmit === "submitting"}>
-                        {vwSubmit === "submitting" ? "Uploading…" : "Post my video wish →"}
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </>
         )}
 
         {/* BUCKET LIST TAB */}
@@ -1063,20 +765,6 @@ export default function App() {
                         <textarea className="wtextarea" rows={4} placeholder="What do you want her to know on this day?"
                           value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
                       </div>
-                      <div className="wfull">
-                        <label className="wlabel">Attach a video (optional)</label>
-                        <div className="w-upload-box">
-                          <input type="file" accept="video/*" onChange={handleMemVideoSelect} />
-                          {memVideoURL ? (
-                            <video src={memVideoURL} className="w-vid-preview" controls />
-                          ) : (
-                            <>
-                              <div className="w-upload-icon">🎥</div>
-                              <p className="w-upload-txt">Click to attach a video wish</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
                     </div>
                     <button className="sbtn" onClick={handleMemSubmit}
                       disabled={!formData.name || !formData.howWeMet || !formData.message || submitStatus === "submitting"}>
@@ -1129,29 +817,7 @@ export default function App() {
             {openCard.favouriteMoment && (<><span className="mo-label">A favourite moment</span><p className="mo-text">{openCard.favouriteMoment}</p><div className="mo-div" /></>)}
             <span className="mo-label">Birthday message</span>
             <p className="mo-msg">"{openCard.message}"</p>
-            {(openCard.videoURL || openCard.videoData) && (
-              <><div className="mo-div" /><span className="mo-label">Video wish</span>
-              <video src={openCard.videoURL || openCard.videoData} className="mo-vid" controls /></>
-            )}
             <p style={{ fontSize: 11, color: "#bcc8e0", marginTop: "1.5rem" }}>{formatDate(openCard.timestamp)}</p>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: video wish player */}
-      {playingVid && (
-        <div className="mo" onClick={() => setPlayingVid(null)}>
-          <div className="mo-vid-box" onClick={e => e.stopPropagation()}>
-            <button className="mo-close-light" onClick={() => setPlayingVid(null)}>×</button>
-            <video
-              src={playingVid.videoURL || playingVid.videoData}
-              className="mo-vid-full"
-              controls autoPlay
-            />
-            <div style={{ padding: "1rem 1.5rem", background: "rgba(255,255,255,.04)" }}>
-              <p style={{ fontFamily: "'Instrument Serif',serif", fontSize: "1.2rem", color: "var(--white)" }}>{playingVid.name}</p>
-              <p style={{ fontSize: 11, color: "rgba(200,222,255,.35)", marginTop: 4 }}>{formatDate(playingVid.timestamp)}</p>
-            </div>
           </div>
         </div>
       )}
