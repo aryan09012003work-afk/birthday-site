@@ -17,7 +17,10 @@ const APPROVED_EMAILS = [
   "pulkitkalra271202@gmail.com",
   "Arunsatakshi70@gmail.com",
   "rt7133175@gmail.com",
-  "trishasingh2926@gmail.com"
+  "trishasingh2926@gmail.com",
+  "abhishek.me.mit@gmail.com",
+  "Keshav.time@gmail.com",
+  "Ankit.gupta874@gmail.com"
   // ← add more approved emails here
 ];
 
